@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-
-
 interface Product {
   id: number;
   name: string;
@@ -13,7 +11,6 @@ interface Product {
 const products: Product[] = [
   { id: 1, name: "Produk A", price: 10000, image: "/images/product-a.jpg", quantity: 1 },
   { id: 2, name: "Produk B", price: 20000, image: "/images/product-b.jpg", quantity: 1 },
-  // Tambahkan produk lain sesuai kebutuhan
 ];
 
 export default function Index() {
@@ -46,8 +43,8 @@ export default function Index() {
   };
 
   return (
-    <div className="container">
-      <h1>Program Kasir</h1>
+    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Program Kasir</h1>
       <ProductTable products={products} addToCart={addToCart} />
       <Cart cart={cart} handleQuantityChange={handleQuantityChange} handleCheckout={handleCheckout} />
     </div>
@@ -56,25 +53,30 @@ export default function Index() {
 
 const ProductTable = ({ products, addToCart }: { products: Product[]; addToCart: (product: Product) => void }) => {
   return (
-    <table>
+    <table className="table-auto w-full mb-8">
       <thead>
-        <tr>
-          <th>Foto</th>
-          <th>Nama Produk</th>
-          <th>Harga</th>
-          <th>Aksi</th>
+        <tr className="text-left bg-gray-100 text-gray-700">
+          <th className="px-6 py-3">Foto</th>
+          <th className="px-6 py-3">Nama Produk</th>
+          <th className="px-6 py-3">Harga</th>
+          <th className="px-6 py-3">Aksi</th>
         </tr>
       </thead>
       <tbody>
         {products.map((product) => (
-          <tr key={product.id}>
-            <td>
-              <img src={product.image} alt={product.name} style={{ width: "100px" }} />
+          <tr key={product.id} className="border-t">
+            <td className="px-6 py-4">
+              <img src={product.image} alt={product.name} className="w-32 h-32 object-cover rounded-md" />
             </td>
-            <td>{product.name}</td>
-            <td>Rp {product.price}</td>
-            <td>
-              <button onClick={() => addToCart(product)}>Tambah ke Keranjang</button>
+            <td className="px-6 py-4">{product.name}</td>
+            <td className="px-6 py-4">Rp {product.price.toLocaleString()}</td>
+            <td className="px-6 py-4">
+              <button
+                onClick={() => addToCart(product)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+              >
+                Tambah ke Keranjang
+              </button>
             </td>
           </tr>
         ))}
@@ -93,44 +95,51 @@ const Cart = ({
   handleCheckout: () => void;
 }) => {
   return (
-    <div>
-      <h2>Keranjang</h2>
+    <div className="mt-8">
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">Keranjang</h2>
       {cart.length === 0 ? (
-        <p>Keranjang kosong</p>
+        <p className="text-gray-500">Keranjang kosong</p>
       ) : (
-        <table>
+        <table className="table-auto w-full mb-8">
           <thead>
-            <tr>
-              <th>Foto</th>
-              <th>Nama Produk</th>
-              <th>Jumlah</th>
-              <th>Harga Total</th>
+            <tr className="text-left bg-gray-100 text-gray-700">
+              <th className="px-6 py-3">Foto</th>
+              <th className="px-6 py-3">Nama Produk</th>
+              <th className="px-6 py-3">Jumlah</th>
+              <th className="px-6 py-3">Harga Total</th>
             </tr>
           </thead>
           <tbody>
             {cart.map((item) => (
-              <tr key={item.id}>
-                <td>
-                  <img src={item.image} alt={item.name} style={{ width: "100px" }} />
+              <tr key={item.id} className="border-t">
+                <td className="px-6 py-4">
+                  <img src={item.image} alt={item.name} className="w-32 h-32 object-cover rounded-md" />
                 </td>
-                <td>{item.name}</td>
-                <td>
+                <td className="px-6 py-4">{item.name}</td>
+                <td className="px-6 py-4">
                   <input
                     type="number"
                     value={item.quantity}
                     onChange={(e) => handleQuantityChange(item.id, +e.target.value)}
+                    className="w-16 text-center border rounded-md"
                     min="1"
                   />
                 </td>
-                <td>Rp {item.price * item.quantity}</td>
+                <td className="px-6 py-4">Rp {item.price * item.quantity}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-      <button onClick={handleCheckout} disabled={cart.length === 0}>
+      <button
+        onClick={handleCheckout}
+        disabled={cart.length === 0}
+        className={`${cart.length === 0 ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+          } text-white font-semibold py-2 px-4 rounded-md`}
+      >
         Bayar
       </button>
     </div>
   );
 };
+
