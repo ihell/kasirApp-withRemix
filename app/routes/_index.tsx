@@ -1,9 +1,11 @@
+// Index.tsx
 import { useEffect, useState } from "react";
-import { db } from "firebaseConfig"; // Pastikan Firebase sudah di-import
+import { Link } from "react-router-dom"; // Menambahkan Link untuk navigasi
+import { db } from "firebaseConfig"; // Firebase config
 import { collection, getDocs } from "firebase/firestore";
 
 interface Product {
-  id: string; // Gunakan string karena id Firebase adalah string
+  id: string;
   name: string;
   price: number;
   image: string;
@@ -13,7 +15,7 @@ interface Product {
 export default function Index() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<Product[]>([]);
-  const [totalAmount, setTotalAmount] = useState<number>(0); // State untuk total harga
+  const [totalAmount, setTotalAmount] = useState<number>(0);
 
   // Fetch data dari Firebase
   useEffect(() => {
@@ -27,7 +29,7 @@ export default function Index() {
           name: data.namaMenu,
           price: data.hargaMenu,
           image: data.gambarMenu,
-          quantity: 1, // Default quantity
+          quantity: 1,
         });
       });
       setProducts(productList);
@@ -55,16 +57,10 @@ export default function Index() {
     );
   };
 
-  // Menghitung total setiap kali keranjang berubah
   useEffect(() => {
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     setTotalAmount(total);
-  }, [cart]); // Total di-update setiap ada perubahan di keranjang
-
-  const handleCheckout = () => {
-    alert(`Total pembayaran: Rp ${totalAmount.toLocaleString()}`);
-    setCart([]);
-  };
+  }, [cart]);
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
@@ -73,9 +69,18 @@ export default function Index() {
       <Cart
         cart={cart}
         handleQuantityChange={handleQuantityChange}
-        totalAmount={totalAmount} // Menampilkan total harga
-        handleCheckout={handleCheckout}
+        totalAmount={totalAmount}
       />
+      {cart.length > 0 && (
+        <div className="text-right">
+          <Link
+            to="/payment"
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
+          >
+            Bayar
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
@@ -118,12 +123,10 @@ const Cart = ({
   cart,
   handleQuantityChange,
   totalAmount,
-  handleCheckout,
 }: {
   cart: Product[];
   handleQuantityChange: (id: string, quantity: number) => void;
   totalAmount: number;
-  handleCheckout: () => void;
 }) => {
   return (
     <div className="mt-8">
@@ -165,14 +168,6 @@ const Cart = ({
       <div className="text-right mb-4">
         <h3 className="text-xl font-semibold">Total: Rp {totalAmount.toLocaleString()}</h3>
       </div>
-      <button
-        onClick={handleCheckout}
-        disabled={cart.length === 0}
-        className={`${cart.length === 0 ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
-          } text-white font-semibold py-2 px-4 rounded-md`}
-      >
-        Bayar
-      </button>
     </div>
   );
 };
