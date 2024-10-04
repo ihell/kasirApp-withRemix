@@ -13,6 +13,7 @@ interface Product {
 export default function Index() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<Product[]>([]);
+  const [totalAmount, setTotalAmount] = useState<number>(0); // State untuk total harga
 
   // Fetch data dari Firebase
   useEffect(() => {
@@ -54,8 +55,13 @@ export default function Index() {
     );
   };
 
+  // Menghitung total setiap kali keranjang berubah
+  useEffect(() => {
+    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    setTotalAmount(total);
+  }, [cart]); // Total di-update setiap ada perubahan di keranjang
+
   const handleCheckout = () => {
-    const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     alert(`Total pembayaran: Rp ${totalAmount.toLocaleString()}`);
     setCart([]);
   };
@@ -64,7 +70,12 @@ export default function Index() {
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Program Kasir</h1>
       <ProductTable products={products} addToCart={addToCart} />
-      <Cart cart={cart} handleQuantityChange={handleQuantityChange} handleCheckout={handleCheckout} />
+      <Cart
+        cart={cart}
+        handleQuantityChange={handleQuantityChange}
+        totalAmount={totalAmount} // Menampilkan total harga
+        handleCheckout={handleCheckout}
+      />
     </div>
   );
 }
@@ -106,10 +117,12 @@ const ProductTable = ({ products, addToCart }: { products: Product[]; addToCart:
 const Cart = ({
   cart,
   handleQuantityChange,
+  totalAmount,
   handleCheckout,
 }: {
   cart: Product[];
   handleQuantityChange: (id: string, quantity: number) => void;
+  totalAmount: number;
   handleCheckout: () => void;
 }) => {
   return (
@@ -143,12 +156,15 @@ const Cart = ({
                     min="1"
                   />
                 </td>
-                <td className="px-6 py-4">Rp {item.price * item.quantity}</td>
+                <td className="px-6 py-4">Rp {(item.price * item.quantity).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+      <div className="text-right mb-4">
+        <h3 className="text-xl font-semibold">Total: Rp {totalAmount.toLocaleString()}</h3>
+      </div>
       <button
         onClick={handleCheckout}
         disabled={cart.length === 0}
