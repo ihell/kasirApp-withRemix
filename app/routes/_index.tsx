@@ -1,20 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { db } from "firebaseConfig"; // Pastikan Firebase sudah di-import
+import { collection, getDocs } from "firebase/firestore";
 
 interface Product {
-  id: number;
+  id: string; // Gunakan string karena id Firebase adalah string
   name: string;
   price: number;
   image: string;
   quantity: number;
 }
 
-const products: Product[] = [
-  { id: 1, name: "Produk A", price: 10000, image: "/images/product-a.jpg", quantity: 1 },
-  { id: 2, name: "Produk B", price: 20000, image: "/images/product-b.jpg", quantity: 1 },
-];
-
 export default function Index() {
+  const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<Product[]>([]);
+
+  // Fetch data dari Firebase
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const querySnapshot = await getDocs(collection(db, "kasir"));
+      const productList: Product[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        productList.push({
+          id: doc.id,
+          name: data.namaMenu,
+          price: data.hargaMenu,
+          image: data.gambarMenu,
+          quantity: 1, // Default quantity
+        });
+      });
+      setProducts(productList);
+    };
+    fetchProducts();
+  }, []);
 
   const addToCart = (product: Product) => {
     setCart((prev) => {
@@ -28,7 +46,7 @@ export default function Index() {
     });
   };
 
-  const handleQuantityChange = (id: number, quantity: number) => {
+  const handleQuantityChange = (id: string, quantity: number) => {
     setCart((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, quantity: quantity } : item
@@ -38,7 +56,7 @@ export default function Index() {
 
   const handleCheckout = () => {
     const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    alert(`Total pembayaran: Rp ${totalAmount}`);
+    alert(`Total pembayaran: Rp ${totalAmount.toLocaleString()}`);
     setCart([]);
   };
 
@@ -91,7 +109,7 @@ const Cart = ({
   handleCheckout,
 }: {
   cart: Product[];
-  handleQuantityChange: (id: number, quantity: number) => void;
+  handleQuantityChange: (id: string, quantity: number) => void;
   handleCheckout: () => void;
 }) => {
   return (
@@ -142,4 +160,3 @@ const Cart = ({
     </div>
   );
 };
-
