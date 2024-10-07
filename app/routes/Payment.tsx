@@ -1,18 +1,21 @@
 // Payment.tsx
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function Payment() {
   const location = useLocation();
-  const { cart, totalAmount } = location.state || { cart: [], totalAmount: 0 }; // Pastikan ada default value
+  const navigate = useNavigate(); // Tambahkan useNavigate untuk navigasi
+  const { cart, totalAmount } = location.state || { cart: [], totalAmount: 0 };
   const [name, setName] = useState<string>("");
   const [method, setMethod] = useState<string>("cash");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Kirim data ke halaman Receipt atau proses pembayaran
-    // ...
+    // Arahkan ke halaman Receipt dengan data cart, totalAmount, name, dan method
+    navigate("/receipt", {
+      state: { cart, totalAmount, name, method },
+    });
   };
 
   return (
