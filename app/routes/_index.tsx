@@ -73,11 +73,14 @@ export default function Index() {
       />
       {cart.length > 0 && (
         <div className="text-right">
-          <Link
-            to="/payment"
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
-          >
-            Bayar
+         <Link
+          to={{
+              pathname: "/payment",
+              }}
+                    state={{ cart: cart, totalAmount: totalAmount }} // Kirim cart dan totalAmount
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
+                    >
+              Bayar
           </Link>
         </div>
       )}

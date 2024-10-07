@@ -1,17 +1,18 @@
 // Payment.tsx
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Untuk navigasi balik
 
 export default function Payment() {
+  const location = useLocation();
+  const { cart, totalAmount } = location.state || { cart: [], totalAmount: 0 }; // Pastikan ada default value
   const [name, setName] = useState<string>("");
   const [method, setMethod] = useState<string>("cash");
-  const [totalAmount] = useState<number>(100000); // Ini contoh, ambil data dari state atau URL
-  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Pembayaran Berhasil!\nNama: ${name}\nMetode: ${method}\nTotal: Rp ${totalAmount}`);
-    navigate("/"); // Kembali ke halaman utama setelah pembayaran
+
+    // Kirim data ke halaman Receipt atau proses pembayaran
+    // ...
   };
 
   return (
