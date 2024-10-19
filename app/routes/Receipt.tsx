@@ -10,47 +10,86 @@ export default function Receipt() {
     method: "",
   };
 
+  // Fungsi untuk mencetak nota
+  const handlePrint = () => {
+    window.print();
+  };
+
+  // Mendapatkan tanggal dan waktu sekarang
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString("id-ID", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const formattedTime = currentDate.toLocaleTimeString("id-ID");
+
   return (
-    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Nota Pembayaran</h1>
-      <div className="mb-4">
-        <h2 className="text-2xl font-bold">Terima kasih, {name}!</h2>
-        <p className="text-gray-600">Pembayaran Anda telah berhasil diproses.</p>
-      </div>
+    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg max-w-md">
+      <div className="bg-white p-4 border-2 border-gray-300 rounded-lg">
+        {/* Header Nota */}
+        <div className="text-center mb-4">
+          <h1 className="text-xl font-bold">NOTA PEMBAYARAN</h1>
+          <p className="text-sm">Minimarket Teyvat</p>
+          <p className="text-sm">Jl. Gi No. 10</p>
+          <p className="text-sm">Telp: (021) 12345678</p>
+          {/* Menampilkan tanggal dan waktu */}
+          <p className="text-sm mt-2">{formattedDate}, {formattedTime}</p>
+        </div>
 
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold">Metode Pembayaran: {method}</h3>
-        <h3 className="text-xl font-semibold">Total Pembayaran: Rp {totalAmount.toLocaleString()}</h3>
-      </div>
+        {/* Informasi Pembeli */}
+        <div className="mb-4">
+          <p className="font-mono text-sm">Nama Pelanggan: {name}</p>
+          <p className="font-mono text-sm">Metode Pembayaran: {method}</p>
+        </div>
 
-      <div className="mb-4">
-        <h2 className="text-2xl font-bold">Detail Pembelian</h2>
-        <table className="table-auto w-full mb-4">
+        {/* Tabel Produk */}
+        <table className="table-auto w-full mb-4 font-mono text-sm">
           <thead>
-            <tr className="text-left bg-gray-100 text-gray-700">
-              <th className="px-6 py-3">Nama Produk</th>
-              <th className="px-6 py-3">Jumlah</th>
-              <th className="px-6 py-3">Harga Satuan</th>
-              <th className="px-6 py-3">Harga Total</th>
+            <tr className="border-b">
+              <th className="py-2 text-left">Produk</th>
+              <th className="py-2 text-center">Jumlah</th>
+              <th className="py-2 text-right">Harga</th>
+              <th className="py-2 text-right">Total</th>
             </tr>
           </thead>
           <tbody>
             {cart.map((item: any) => (
-              <tr key={item.id} className="border-t">
-                <td className="px-6 py-4">{item.name}</td>
-                <td className="px-6 py-4">{item.quantity}</td>
-                <td className="px-6 py-4">Rp {item.price.toLocaleString()}</td>
-                <td className="px-6 py-4">
+              <tr key={item.id} className="border-b">
+                <td className="py-1">{item.name}</td>
+                <td className="py-1 text-center">{item.quantity}</td>
+                <td className="py-1 text-right">Rp {item.price.toLocaleString()}</td>
+                <td className="py-1 text-right">
                   Rp {(item.price * item.quantity).toLocaleString()}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        {/* Total Pembayaran */}
+        <div className="border-t border-gray-400 py-2">
+          <h3 className="font-mono text-sm font-semibold text-right">
+            Total: Rp {totalAmount.toLocaleString()}
+          </h3>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-4">
+          <p className="text-xs font-mono">Terima kasih atas kunjungannya!</p>
+          <p className="text-xs font-mono">Barang yang sudah dibeli tidak dapat dikembalikan.</p>
+        </div>
       </div>
 
-      <div className="text-right">
-        <h3 className="text-xl font-semibold">Total: Rp {totalAmount.toLocaleString()}</h3>
+      {/* Tombol Print */}
+      <div className="text-center mt-4">
+        <button
+          onClick={handlePrint}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
+        >
+          Print Nota
+        </button>
       </div>
     </div>
   );
