@@ -6,15 +6,36 @@ export default function Payment() {
   const location = useLocation();
   const navigate = useNavigate(); // Tambahkan useNavigate untuk navigasi
   const { cart, totalAmount } = location.state || { cart: [], totalAmount: 0 };
+  
   const [name, setName] = useState<string>("");
   const [method, setMethod] = useState<string>("cash");
+  const [cashReceived, setCashReceived] = useState<number>(0);
+  const [customCash, setCustomCash] = useState<string>("");
+
+  // Fungsi untuk mengatur nominal uang masuk
+  const handleCashChange = (amount: number) => {
+    setCashReceived(amount);
+    setCustomCash(""); // Reset input custom jika memilih dari opsi
+  };
+
+  // Fungsi untuk mengatur nominal uang masuk manual
+  const handleCustomCash = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomCash(e.target.value);
+    setCashReceived(Number(e.target.value) || 0); // Pastikan nilai input dapat diubah ke angka
+  };
+
+  // Opsi untuk Uang Pas
+  const handleExactAmount = () => {
+    setCashReceived(totalAmount);
+    setCustomCash(""); // Reset input custom jika memilih Uang Pas
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Arahkan ke halaman Receipt dengan data cart, totalAmount, name, dan method
+    // Arahkan ke halaman Receipt dengan data cart, totalAmount, name, method, dan cashReceived
     navigate("/receipt", {
-      state: { cart, totalAmount, name, method },
+      state: { cart, totalAmount, name, method, cashReceived },
     });
   };
 
@@ -44,7 +65,47 @@ export default function Payment() {
           </select>
         </div>
         <div>
+          <label className="block text-sm font-medium text-gray-700">Uang Masuk</label>
+          <div className="grid grid-cols-3 gap-2">
+            {[5000, 10000, 20000, 50000, 100000].map((amount) => (
+              <button
+                key={amount}
+                type="button"
+                className={`px-4 py-2 border rounded-md ${cashReceived === amount ? 'bg-gray-300' : ''}`}
+                onClick={() => handleCashChange(amount)}
+              >
+                Rp {amount.toLocaleString()}
+              </button>
+            ))}
+            <button
+              type="button"
+              className={`px-4 py-2 border rounded-md ${cashReceived === totalAmount ? 'bg-gray-300' : ''}`}
+              onClick={handleExactAmount}
+            >
+              Uang Pas
+            </button>
+          </div>
+          <div className="mt-2">
+            <label className="block text-sm font-medium text-gray-700">Nominal Lain (Manual)</label>
+            <input
+              type="number"
+              value={customCash}
+              onChange={handleCustomCash}
+              placeholder="Masukkan nominal uang"
+              className="block w-full px-4 py-2 border rounded-md"
+            />
+          </div>
+        </div>
+        <div>
           <h3 className="text-xl font-semibold">Total: Rp {totalAmount.toLocaleString()}</h3>
+        </div>
+        <div>
+          <h3 className="text-xl font-semibold">
+            Uang Masuk: Rp {cashReceived.toLocaleString()}
+          </h3>
+          <h3 className="text-xl font-semibold">
+            Kembalian: Rp {(cashReceived - totalAmount).toLocaleString()}
+          </h3>
         </div>
         <button
           type="submit"

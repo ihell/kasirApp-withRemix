@@ -3,12 +3,15 @@ import { useLocation } from "react-router-dom";
 
 export default function Receipt() {
   const location = useLocation();
-  const { cart, totalAmount, name, method } = location.state || {
+  const { cart, totalAmount, name, method, cashReceived } = location.state || {
     cart: [],
     totalAmount: 0,
     name: "",
     method: "",
+    cashReceived: 0,
   };
+
+  const change = cashReceived - totalAmount;
 
   // Fungsi untuk mencetak nota
   const handlePrint = () => {
@@ -34,7 +37,6 @@ export default function Receipt() {
           <p className="text-sm">Minimarket Teyvat</p>
           <p className="text-sm">Jl. Gi No. 10</p>
           <p className="text-sm">Telp: (021) 12345678</p>
-          {/* Menampilkan tanggal dan waktu */}
           <p className="text-sm mt-2">{formattedDate}, {formattedTime}</p>
         </div>
 
@@ -72,6 +74,16 @@ export default function Receipt() {
         <div className="border-t border-gray-400 py-2">
           <h3 className="font-mono text-sm font-semibold text-right">
             Total: Rp {totalAmount.toLocaleString()}
+          </h3>
+        </div>
+
+        {/* Informasi Uang Masuk dan Kembalian */}
+        <div className="border-t border-gray-400 py-2">
+          <h3 className="font-mono text-sm font-semibold text-right">
+            Uang Masuk: Rp {cashReceived.toLocaleString()}
+          </h3>
+          <h3 className="font-mono text-sm font-semibold text-right">
+            Kembalian: Rp {change > 0 ? change.toLocaleString() : 0}
           </h3>
         </div>
 
