@@ -1,4 +1,3 @@
-// Index.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // Menambahkan Link untuk navigasi
 import { db } from "firebaseConfig"; // Firebase config
@@ -57,6 +56,11 @@ export default function Index() {
     );
   };
 
+  // Fungsi untuk menghapus produk dari keranjang
+  const removeFromCart = (id: string) => {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  };
+
   useEffect(() => {
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     setTotalAmount(total);
@@ -69,6 +73,7 @@ export default function Index() {
       <Cart
         cart={cart}
         handleQuantityChange={handleQuantityChange}
+        removeFromCart={removeFromCart}  // Mengirim fungsi removeFromCart ke komponen Cart
         totalAmount={totalAmount}
       />
       {cart.length > 0 && (
@@ -125,10 +130,12 @@ const ProductTable = ({ products, addToCart }: { products: Product[]; addToCart:
 const Cart = ({
   cart,
   handleQuantityChange,
+  removeFromCart,  // Terima fungsi removeFromCart dari komponen induk
   totalAmount,
 }: {
   cart: Product[];
   handleQuantityChange: (id: string, quantity: number) => void;
+  removeFromCart: (id: string) => void;  // Deklarasi fungsi removeFromCart
   totalAmount: number;
 }) => {
   return (
@@ -144,6 +151,7 @@ const Cart = ({
               <th className="px-6 py-3">Nama Produk</th>
               <th className="px-6 py-3">Jumlah</th>
               <th className="px-6 py-3">Harga Total</th>
+              <th className="px-6 py-3">Aksi</th>  {/* Kolom untuk aksi penghapusan */}
             </tr>
           </thead>
           <tbody>
@@ -163,6 +171,14 @@ const Cart = ({
                   />
                 </td>
                 <td className="px-6 py-4">Rp {(item.price * item.quantity).toLocaleString()}</td>
+                <td className="px-6 py-4">
+                  <button
+                    onClick={() => removeFromCart(item.id)}  // Fungsi penghapusan produk
+                    className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md"
+                  >
+                    Hapus
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
