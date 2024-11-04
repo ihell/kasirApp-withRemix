@@ -33,7 +33,7 @@ export default function Receipt() {
       <div className="bg-white p-4 border-2 border-gray-300 rounded-lg">
         {/* Header Nota */}
         <div className="text-center mb-4">
-          <h1 className="text-xl font-bold">NOTA PEMBAYARAN</h1>
+          <h1 className="text-xl font-bold">SwiftBill</h1>
           <p className="text-sm">Minimarket Teyvat</p>
           <p className="text-sm">Jl. Gi No. 10</p>
           <p className="text-sm">Telp: (021) 12345678</p>
@@ -42,17 +42,17 @@ export default function Receipt() {
 
         {/* Informasi Pembeli */}
         <div className="mb-4">
-          <p className="font-mono text-sm">Nama Pelanggan: {name}</p>
-          <p className="font-mono text-sm">Metode Pembayaran: {method}</p>
+          <p className="font-mono text-sm">Customer Name: {name}</p>
+          <p className="font-mono text-sm">payment Method: {method}</p>
         </div>
 
         {/* Tabel Produk */}
         <table className="table-auto w-full mb-4 font-mono text-sm">
           <thead>
             <tr className="border-b">
-              <th className="py-2 text-left">Produk</th>
-              <th className="py-2 text-center">Jumlah</th>
-              <th className="py-2 text-right">Harga</th>
+              <th className="py-2 text-left">Product</th>
+              <th className="py-2 text-center">Amount</th>
+              <th className="py-2 text-right">Price</th>
               <th className="py-2 text-right">Total</th>
             </tr>
           </thead>
@@ -80,17 +80,17 @@ export default function Receipt() {
         {/* Informasi Uang Masuk dan Kembalian */}
         <div className="border-t border-gray-400 py-2">
           <h3 className="font-mono text-sm font-semibold text-right">
-            Uang Masuk: Rp {cashReceived.toLocaleString()}
+          Admission Fee: Rp {cashReceived.toLocaleString()}
           </h3>
           <h3 className="font-mono text-sm font-semibold text-right">
-            Kembalian: Rp {change > 0 ? change.toLocaleString() : 0}
+            Return: Rp {change > 0 ? change.toLocaleString() : 0}
           </h3>
         </div>
 
         {/* Footer */}
         <div className="text-center mt-4">
-          <p className="text-xs font-mono">Terima kasih atas kunjungannya!</p>
-          <p className="text-xs font-mono">Barang yang sudah dibeli tidak dapat dikembalikan.</p>
+          <p className="text-xs font-mono">Thank you For Visiting!</p>
+          <p className="text-xs font-mono">Goods That Have Been Purchased Cannot Be Returned.</p>
         </div>
       </div>
 
@@ -100,7 +100,7 @@ export default function Receipt() {
           onClick={handlePrint}
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
         >
-          Print Nota
+          Print Note
         </button>
       </div>
     </div>

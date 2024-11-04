@@ -68,7 +68,7 @@ export default function Index() {
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Program Kasir</h1>
+      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">SwiftBill</h1>
       <ProductTable products={products} addToCart={addToCart} />
       <Cart
         cart={cart}
@@ -85,7 +85,7 @@ export default function Index() {
                     state={{ cart: cart, totalAmount: totalAmount }} // Kirim cart dan totalAmount
                     className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
                     >
-              Bayar
+              Pay
           </Link>
         </div>
       )}
@@ -98,10 +98,10 @@ const ProductTable = ({ products, addToCart }: { products: Product[]; addToCart:
     <table className="table-auto w-full mb-8">
       <thead>
         <tr className="text-left bg-gray-100 text-gray-700">
-          <th className="px-6 py-3">Foto</th>
-          <th className="px-6 py-3">Nama Produk</th>
-          <th className="px-6 py-3">Harga</th>
-          <th className="px-6 py-3">Aksi</th>
+          <th className="px-6 py-3">Photo</th>
+          <th className="px-6 py-3">Name Product</th>
+          <th className="px-6 py-3">Price</th>
+          <th className="px-6 py-3">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -117,7 +117,7 @@ const ProductTable = ({ products, addToCart }: { products: Product[]; addToCart:
                 onClick={() => addToCart(product)}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
               >
-                Tambah ke Keranjang
+                Buy
               </button>
             </td>
           </tr>
@@ -140,18 +140,18 @@ const Cart = ({
 }) => {
   return (
     <div className="mt-8">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Keranjang</h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">Cart</h2>
       {cart.length === 0 ? (
-        <p className="text-gray-500">Keranjang kosong</p>
+        <p className="text-gray-500">Empty</p>
       ) : (
         <table className="table-auto w-full mb-8">
           <thead>
             <tr className="text-left bg-gray-100 text-gray-700">
-              <th className="px-6 py-3">Foto</th>
-              <th className="px-6 py-3">Nama Produk</th>
-              <th className="px-6 py-3">Jumlah</th>
-              <th className="px-6 py-3">Harga Total</th>
-              <th className="px-6 py-3">Aksi</th>  {/* Kolom untuk aksi penghapusan */}
+              <th className="px-6 py-3">Photo</th>
+              <th className="px-6 py-3">Name Product</th>
+              <th className="px-6 py-3">Amout</th>
+              <th className="px-6 py-3">Total Price</th>
+              <th className="px-6 py-3">Action</th>  {/* Kolom untuk aksi penghapusan */}
             </tr>
           </thead>
           <tbody>
@@ -176,7 +176,7 @@ const Cart = ({
                     onClick={() => removeFromCart(item.id)}  // Fungsi penghapusan produk
                     className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md"
                   >
-                    Hapus
+                    Remove
                   </button>
                 </td>
               </tr>

@@ -41,10 +41,10 @@ export default function Payment() {
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Form Pembayaran</h1>
+      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">SwiftBill</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Nama Pelanggan</label>
+          <label className="block text-sm font-medium text-gray-700">customer name</label>
           <input
             type="text"
             value={name}
@@ -54,18 +54,18 @@ export default function Payment() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
+          <label className="block text-sm font-medium text-gray-700">Payment Method</label>
           <select
             value={method}
             onChange={(e) => setMethod(e.target.value)}
             className="block w-full px-4 py-2 border rounded-md"
           >
-            <option value="cash">Tunai</option>
-            <option value="credit">Kartu Kredit</option>
+            <option value="cash">Cash</option>
+            <option value="credit">Credit Card</option>
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Uang Masuk</label>
+          <label className="block text-sm font-medium text-gray-700">Admission Fee</label>
           <div className="grid grid-cols-3 gap-2">
             {[5000, 10000, 20000, 50000, 100000].map((amount) => (
               <button
@@ -82,11 +82,11 @@ export default function Payment() {
               className={`px-4 py-2 border rounded-md ${cashReceived === totalAmount ? 'bg-gray-300' : ''}`}
               onClick={handleExactAmount}
             >
-              Uang Pas
+              Exact Money
             </button>
           </div>
           <div className="mt-2">
-            <label className="block text-sm font-medium text-gray-700">Nominal Lain (Manual)</label>
+            <label className="block text-sm font-medium text-gray-700">Another Nominal (Manually)</label>
             <input
               type="number"
               value={customCash}
@@ -101,17 +101,17 @@ export default function Payment() {
         </div>
         <div>
           <h3 className="text-xl font-semibold">
-            Uang Masuk: Rp {cashReceived.toLocaleString()}
+          Admission Fee: Rp {cashReceived.toLocaleString()}
           </h3>
           <h3 className="text-xl font-semibold">
-            Kembalian: Rp {(cashReceived - totalAmount).toLocaleString()}
+          Return: Rp {(cashReceived - totalAmount).toLocaleString()}
           </h3>
         </div>
         <button
           type="submit"
           className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
         >
-          Bayar Sekarang
+          Pay Now
         </button>
       </form>
     </div>
