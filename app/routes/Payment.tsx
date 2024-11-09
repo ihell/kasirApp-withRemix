@@ -1,4 +1,3 @@
-// Payment.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -39,12 +38,17 @@ export default function Payment() {
     });
   };
 
+  // Fungsi untuk kembali ke halaman sebelumnya
+  const handleGoBack = () => {
+    navigate(-1); // Kembali ke halaman sebelumnya
+  };
+
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">SwiftBill</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">customer name</label>
+          <label className="block text-sm font-medium text-gray-700">Customer Name</label>
           <input
             type="text"
             value={name}
@@ -101,18 +105,27 @@ export default function Payment() {
         </div>
         <div>
           <h3 className="text-xl font-semibold">
-          Admission Fee: Rp {cashReceived.toLocaleString()}
+            Admission Fee: Rp {cashReceived.toLocaleString()}
           </h3>
           <h3 className="text-xl font-semibold">
-          Return: Rp {(cashReceived - totalAmount).toLocaleString()}
+            Return: Rp {(cashReceived - totalAmount).toLocaleString()}
           </h3>
         </div>
-        <button
-          type="submit"
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
-        >
-          Pay Now
-        </button>
+        <div className="flex justify-between">
+          <button
+            type="button"
+            onClick={handleGoBack} // Kembali ke halaman sebelumnya
+            className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md"
+          >
+            Back
+          </button>
+          <button
+            type="submit"
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
+          >
+            Pay Now
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -1,8 +1,8 @@
-// Receipt.tsx
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Receipt() {
   const location = useLocation();
+  const navigate = useNavigate(); // Menggunakan useNavigate untuk navigasi
   const { cart, totalAmount, name, method, cashReceived } = location.state || {
     cart: [],
     totalAmount: 0,
@@ -16,6 +16,11 @@ export default function Receipt() {
   // Fungsi untuk mencetak nota
   const handlePrint = () => {
     window.print();
+  };
+
+  // Fungsi untuk kembali ke halaman sebelumnya
+  const handleGoBack = () => {
+    navigate(-1); // Kembali ke halaman sebelumnya
   };
 
   // Mendapatkan tanggal dan waktu sekarang
@@ -43,7 +48,7 @@ export default function Receipt() {
         {/* Informasi Pembeli */}
         <div className="mb-4">
           <p className="font-mono text-sm">Customer Name: {name}</p>
-          <p className="font-mono text-sm">payment Method: {method}</p>
+          <p className="font-mono text-sm">Payment Method: {method}</p>
         </div>
 
         {/* Tabel Produk */}
@@ -80,7 +85,7 @@ export default function Receipt() {
         {/* Informasi Uang Masuk dan Kembalian */}
         <div className="border-t border-gray-400 py-2">
           <h3 className="font-mono text-sm font-semibold text-right">
-          Admission Fee: Rp {cashReceived.toLocaleString()}
+            Admission Fee: Rp {cashReceived.toLocaleString()}
           </h3>
           <h3 className="font-mono text-sm font-semibold text-right">
             Return: Rp {change > 0 ? change.toLocaleString() : 0}
@@ -94,8 +99,14 @@ export default function Receipt() {
         </div>
       </div>
 
-      {/* Tombol Print */}
-      <div className="text-center mt-4">
+      {/* Tombol Print dan Tombol Back */}
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={handleGoBack}
+          className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md"
+        >
+          Back
+        </button>
         <button
           onClick={handlePrint}
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
