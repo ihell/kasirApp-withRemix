@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Menambahkan Link untuk navigasi
-import { db } from "firebaseConfig"; // Firebase config
+import { Link, useNavigate } from "react-router-dom";
+import { db } from "firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 
 interface Product {
@@ -15,8 +15,9 @@ export default function Index() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<Product[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [menuOpen, setMenuOpen] = useState(false); // State untuk kontrol menu
+  const navigate = useNavigate();
 
-  // Fetch data dari Firebase
   useEffect(() => {
     const fetchProducts = async () => {
       const querySnapshot = await getDocs(collection(db, "kasir"));
@@ -56,7 +57,6 @@ export default function Index() {
     );
   };
 
-  // Fungsi untuk menghapus produk dari keranjang
   const removeFromCart = (id: string) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
@@ -67,25 +67,52 @@ export default function Index() {
   }, [cart]);
 
   return (
-    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">SwiftBill</h1>
+    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg relative">
+      {/* Header dengan ikon menu */}
+      <div className="flex items-center justify-between mb-8">
+        <button
+          className="text-gray-800 text-3xl"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          &#9776; {/* Ikon garis tiga (hamburger) */}
+        </button>
+        <h1 className="text-4xl font-bold text-gray-800">SwiftBill</h1>
+      </div>
+
+      {/* Menu dropdown dengan efek transisi */}
+      <div
+        className={`absolute bg-white shadow-lg rounded-lg p-4 left-0 top-15 z-10 transform transition-all duration-300 ease-in-out ${
+          menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"
+        }`}
+      >
+        <button
+          onClick={() => {
+            setMenuOpen(false);
+            navigate("/admin");
+          }}
+          className="block text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-md"
+        >
+          Admin Page
+        </button>
+      </div>
+
       <ProductTable products={products} addToCart={addToCart} />
       <Cart
         cart={cart}
         handleQuantityChange={handleQuantityChange}
-        removeFromCart={removeFromCart}  // Mengirim fungsi removeFromCart ke komponen Cart
+        removeFromCart={removeFromCart}
         totalAmount={totalAmount}
       />
       {cart.length > 0 && (
         <div className="text-right">
-         <Link
-          to={{
+          <Link
+            to={{
               pathname: "/payment",
-              }}
-                    state={{ cart: cart, totalAmount: totalAmount }} // Kirim cart dan totalAmount
-                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
-                    >
-              Pay
+            }}
+            state={{ cart: cart, totalAmount: totalAmount }}
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
+          >
+            Pay
           </Link>
         </div>
       )}
@@ -130,12 +157,12 @@ const ProductTable = ({ products, addToCart }: { products: Product[]; addToCart:
 const Cart = ({
   cart,
   handleQuantityChange,
-  removeFromCart,  // Terima fungsi removeFromCart dari komponen induk
+  removeFromCart,
   totalAmount,
 }: {
   cart: Product[];
   handleQuantityChange: (id: string, quantity: number) => void;
-  removeFromCart: (id: string) => void;  // Deklarasi fungsi removeFromCart
+  removeFromCart: (id: string) => void;
   totalAmount: number;
 }) => {
   return (
@@ -151,7 +178,7 @@ const Cart = ({
               <th className="px-6 py-3">Name Product</th>
               <th className="px-6 py-3">Amout</th>
               <th className="px-6 py-3">Total Price</th>
-              <th className="px-6 py-3">Action</th>  {/* Kolom untuk aksi penghapusan */}
+              <th className="px-6 py-3">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -173,7 +200,7 @@ const Cart = ({
                 <td className="px-6 py-4">Rp {(item.price * item.quantity).toLocaleString()}</td>
                 <td className="px-6 py-4">
                   <button
-                    onClick={() => removeFromCart(item.id)}  // Fungsi penghapusan produk
+                    onClick={() => removeFromCart(item.id)}
                     className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md"
                   >
                     Remove
