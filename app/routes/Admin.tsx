@@ -1,4 +1,3 @@
-// Admin.tsx
 import { useState, useEffect } from "react";
 import { db, storage } from "firebaseConfig";
 import {
@@ -46,7 +45,7 @@ export default function Admin() {
   const handleAddProduct = async () => {
     if (newProduct.name && newProduct.price && newProduct.imageFile) {
       // Upload image to Firebase Storage
-      const imageRef = ref(storage, `images/${newProduct.imageFile.name}`);
+      const imageRef = ref(storage, `kasir/${newProduct.imageFile.name}`);
       await uploadBytes(imageRef, newProduct.imageFile);
       const imageUrl = await getDownloadURL(imageRef);
 
