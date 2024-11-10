@@ -88,7 +88,7 @@ export default function Index() {
         <button
           onClick={() => {
             setMenuOpen(false);
-            navigate("/admin");
+            navigate("./Admin");
           }}
           className="block text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-md"
         >
