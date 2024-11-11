@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { db, storage } from "firebaseConfig";
+import { db, storage } from "firebaseConfig"; // Pastikan path firebaseConfig benar
 import {
   collection,
   getDocs,
@@ -20,7 +20,11 @@ interface Product {
 
 export default function Admin() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [newProduct, setNewProduct] = useState({ name: "", price: "", imageFile: null });
+  const [newProduct, setNewProduct] = useState<{ name: string; price: number; imageFile: File | null }>({
+    name: "",
+    price: 0,
+    imageFile: null,
+  });
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
@@ -44,19 +48,18 @@ export default function Admin() {
 
   const handleAddProduct = async () => {
     if (newProduct.name && newProduct.price && newProduct.imageFile) {
-      // Upload image to Firebase Storage
       const imageRef = ref(storage, `kasir/${newProduct.imageFile.name}`);
       await uploadBytes(imageRef, newProduct.imageFile);
       const imageUrl = await getDownloadURL(imageRef);
 
       const docRef = await addDoc(collection(db, "kasir"), {
         namaMenu: newProduct.name,
-        hargaMenu: parseFloat(newProduct.price),
+        hargaMenu: newProduct.price,
         gambarMenu: imageUrl,
       });
 
-      setProducts([...products, { ...newProduct, id: docRef.id, image: imageUrl, quantity: 1 }]);
-      setNewProduct({ name: "", price: "", imageFile: null });
+      setProducts([...products, { id: docRef.id, name: newProduct.name, price: newProduct.price, image: imageUrl, quantity: 1 }]);
+      setNewProduct({ name: "", price: 0, imageFile: null });
     }
   };
 
@@ -69,7 +72,7 @@ export default function Admin() {
       const docRef = doc(db, "kasir", editingProduct.id);
       await updateDoc(docRef, {
         namaMenu: editingProduct.name,
-        hargaMenu: parseFloat(editingProduct.price.toString()),
+        hargaMenu: editingProduct.price,
         gambarMenu: editingProduct.image,
       });
       setProducts(products.map((product) =>
@@ -99,10 +102,10 @@ export default function Admin() {
           className="border p-2 rounded mb-2 mr-2"
         />
         <input
-          type="text"
+          type="number"
           placeholder="Price"
           value={newProduct.price}
-          onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+          onChange={(e) => setNewProduct({ ...newProduct, price: Number(e.target.value) })}
           className="border p-2 rounded mb-2 mr-2"
         />
         <input
@@ -152,9 +155,9 @@ export default function Admin() {
                 <td className="px-6 py-4">
                   {editingProduct && editingProduct.id === product.id ? (
                     <input
-                      type="text"
+                      type="number"
                       value={editingProduct.price}
-                      onChange={(e) => setEditingProduct({ ...editingProduct, price: +e.target.value })}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })}
                       className="border p-2 rounded"
                     />
                   ) : (
