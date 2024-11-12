@@ -26,6 +26,7 @@ export default function Admin() {
     imageFile: null,
   });
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [notification, setNotification] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -46,6 +47,11 @@ export default function Admin() {
     fetchProducts();
   }, []);
 
+  const showNotification = (message: string) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 3000); // Notifikasi akan hilang dalam 3 detik
+  };
+
   const handleAddProduct = async () => {
     if (newProduct.name && newProduct.price && newProduct.imageFile) {
       const imageRef = ref(storage, `kasir/${newProduct.imageFile.name}`);
@@ -60,6 +66,7 @@ export default function Admin() {
 
       setProducts([...products, { id: docRef.id, name: newProduct.name, price: newProduct.price, image: imageUrl, quantity: 1 }]);
       setNewProduct({ name: "", price: 0, imageFile: null });
+      showNotification("Product added successfully!");
     }
   };
 
@@ -79,6 +86,7 @@ export default function Admin() {
         product.id === editingProduct.id ? editingProduct : product
       ));
       setEditingProduct(null);
+      showNotification("Product updated successfully!");
     }
   };
 
@@ -86,11 +94,26 @@ export default function Admin() {
     const docRef = doc(db, "kasir", id);
     await deleteDoc(docRef);
     setProducts(products.filter((product) => product.id !== id));
+    showNotification("Product deleted successfully!");
   };
 
   return (
+
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-4xl font-bold text-gray-800 mb-8">Admin Page</h1>
+
+      <button
+          onClick={() => window.history.back()}
+          className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md mb-4">
+           Back
+    </button>
+
+
+      {notification && (
+        <div className="mb-4 p-4 bg-green-100 text-green-800 rounded-lg">
+          {notification}
+        </div>
+      )}
 
       <div className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Add New Product</h2>
