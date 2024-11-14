@@ -83,6 +83,16 @@ export default function Login() {
           </p>
         )}
       </div>
+
+      {/* Tombol Kembali ke Halaman Index */}
+      <div className="mt-6">
+        <button
+          onClick={() => navigate("/")}
+          className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md w-full"
+        >
+          Back to Home
+        </button>
+      </div>
     </div>
   );
 }

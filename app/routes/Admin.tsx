@@ -1,14 +1,9 @@
 import { useState, useEffect } from "react";
 import { db, storage } from "firebaseConfig"; // Pastikan path firebaseConfig benar
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
 
 interface Product {
   id: string;
@@ -27,8 +22,26 @@ export default function Admin() {
   });
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const auth = getAuth();
+
+  // Memeriksa status login pengguna
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        navigate("/login"); // Jika tidak ada pengguna, arahkan ke halaman login
+      } else {
+        setIsAuthenticated(true); // Pengguna sudah login
+      }
+    });
+
+    return () => unsubscribe(); // Bersihkan listener saat komponen dihapus
+  }, [auth, navigate]);
 
   useEffect(() => {
+    if (!isAuthenticated) return; // Jika belum login, jangan ambil data produk
+
     const fetchProducts = async () => {
       const querySnapshot = await getDocs(collection(db, "kasir"));
       const productList: Product[] = [];
@@ -45,7 +58,7 @@ export default function Admin() {
       setProducts(productList);
     };
     fetchProducts();
-  }, []);
+  }, [isAuthenticated]);
 
   const showNotification = (message: string) => {
     setNotification(message);
@@ -97,17 +110,29 @@ export default function Admin() {
     showNotification("Product deleted successfully!");
   };
 
-  return (
+  const handleLogout = async () => {
+    await signOut(auth);
+    setIsAuthenticated(false);
+    navigate("/login"); // Arahkan ke halaman login setelah logout
+  };
 
+  return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-4xl font-bold text-gray-800 mb-8">Admin Page</h1>
 
       <button
-          onClick={() => window.history.back()}
-          className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md mb-4">
-           Back
-    </button>
+        onClick={() => window.history.back()}
+        className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md mb-4"
+      >
+        Back
+      </button>
 
+      <button
+        onClick={handleLogout}
+        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md mb-4 ml-4"
+      >
+        Logout
+      </button>
 
       {notification && (
         <div className="mb-4 p-4 bg-green-100 text-green-800 rounded-lg">
