@@ -111,10 +111,19 @@ export default function Admin() {
   };
 
   const handleLogout = async () => {
-    await signOut(auth);
-    setIsAuthenticated(false);
-    navigate("/login"); // Arahkan ke halaman login setelah logout
+    try {
+      await signOut(auth);
+      showNotification("Logout successful! Redirecting to login page...");
+      setTimeout(() => {
+        setIsAuthenticated(false);
+        navigate("/login"); // Arahkan ke halaman login setelah logout
+      }, 2000); // Beri jeda 2 detik sebelum redirect
+    } catch (error) {
+      showNotification("Failed to logout. Please try again.");
+    }
   };
+  
+  
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">

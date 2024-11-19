@@ -8,23 +8,32 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false); // Menambahkan state untuk mode daftar
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // State untuk notifikasi sukses
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/admin"); // Arahkan ke halaman admin setelah login berhasil
+      setSuccessMessage("Login successful! Redirecting to admin page...");
+      setTimeout(() => {
+        navigate("/admin"); // Arahkan ke halaman admin setelah 2 detik
+      }, 2000);
     } catch (err) {
       setError("Login failed. Please check your email and password.");
+      setSuccessMessage(null); // Reset pesan sukses
     }
   };
 
   const handleSignUp = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      navigate("/admin"); // Arahkan ke halaman admin setelah pendaftaran berhasil
+      setSuccessMessage("Sign up successful! Redirecting to admin page...");
+      setTimeout(() => {
+        navigate("/admin"); // Arahkan ke halaman admin setelah 2 detik
+      }, 2000);
     } catch (err) {
       setError("Sign up failed. Please try again.");
+      setSuccessMessage(null); // Reset pesan sukses
     }
   };
 
@@ -33,7 +42,21 @@ export default function Login() {
       <h1 className="text-4xl font-bold text-gray-800 mb-8">
         {isRegistering ? "Sign Up" : "Login"}
       </h1>
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+
+      {/* Menampilkan pesan sukses */}
+      {successMessage && (
+        <div className="text-green-500 mb-4 p-4 bg-green-100 rounded-lg">
+          {successMessage}
+        </div>
+      )}
+
+      {/* Menampilkan pesan error */}
+      {error && (
+        <div className="text-red-500 mb-4 p-4 bg-red-100 rounded-lg">
+          {error}
+        </div>
+      )}
+
       <input
         type="email"
         placeholder="Email"
@@ -62,6 +85,7 @@ export default function Login() {
               onClick={() => {
                 setIsRegistering(false);
                 setError(null); // Reset error saat mode berubah
+                setSuccessMessage(null); // Reset pesan sukses saat mode berubah
               }}
               className="text-blue-600 cursor-pointer"
             >
@@ -75,6 +99,7 @@ export default function Login() {
               onClick={() => {
                 setIsRegistering(true);
                 setError(null); // Reset error saat mode berubah
+                setSuccessMessage(null); // Reset pesan sukses saat mode berubah
               }}
               className="text-blue-600 cursor-pointer"
             >
