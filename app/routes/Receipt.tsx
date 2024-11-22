@@ -1,8 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 export default function Receipt() {
   const location = useLocation();
-  const navigate = useNavigate(); // Menggunakan useNavigate untuk navigasi
+  const navigate = useNavigate();
   const { cart, totalAmount, name, method, cashReceived } = location.state || {
     cart: [],
     totalAmount: 0,
@@ -13,17 +15,35 @@ export default function Receipt() {
 
   const change = cashReceived - totalAmount;
 
-  // Fungsi untuk mencetak nota
   const handlePrint = () => {
     window.print();
   };
 
-  // Fungsi untuk kembali ke halaman sebelumnya
   const handleGoBack = () => {
-    navigate(-1); // Kembali ke halaman sebelumnya
+    navigate(-1);
   };
 
-  // Mendapatkan tanggal dan waktu sekarang
+  const generatePDF = async () => {
+    const receiptElement = document.getElementById("receipt-content");
+    if (!receiptElement) return;
+
+    const canvas = await html2canvas(receiptElement);
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("receipt.pdf");
+  };
+
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString("id-ID", {
     weekday: "long",
@@ -35,7 +55,7 @@ export default function Receipt() {
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg max-w-md">
-      <div className="bg-white p-4 border-2 border-gray-300 rounded-lg">
+      <div id="receipt-content" className="bg-white p-4 border-2 border-gray-300 rounded-lg">
         {/* Header Nota */}
         <div className="text-center mb-4">
           <h1 className="text-xl font-bold">SwiftBill</h1>
@@ -112,6 +132,12 @@ export default function Receipt() {
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
         >
           Print Note
+        </button>
+        <button
+          onClick={generatePDF}
+          className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md"
+        >
+          Download PDF
         </button>
       </div>
     </div>
