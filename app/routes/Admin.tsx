@@ -159,12 +159,19 @@ export default function Admin() {
           className="border p-2 rounded mb-2 mr-2"
         />
         <input
-          type="number"
+          type="text"
           placeholder="Price"
-          value={newProduct.price}
-          onChange={(e) => setNewProduct({ ...newProduct, price: Number(e.target.value) })}
-          className="border p-2 rounded mb-2 mr-2"
-        />
+          value={newProduct.price === 0 ? "" : newProduct.price.toString()}
+          onChange={(e) => {
+        const input = e.target.value;
+      // Hanya memperbarui state jika input adalah angka yang valid
+          if (/^\d*$/.test(input)) {
+      setNewProduct({ ...newProduct, price: Number(input || "0") });
+    }
+  }}
+  className="border p-2 rounded mb-2 mr-2"
+/>
+
         <input
           type="file"
           onChange={(e) =>
@@ -211,12 +218,18 @@ export default function Admin() {
                 </td>
                 <td className="px-6 py-4">
                   {editingProduct && editingProduct.id === product.id ? (
-                    <input
-                      type="number"
-                      value={editingProduct.price}
-                      onChange={(e) => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })}
-                      className="border p-2 rounded"
-                    />
+                  <input
+                  type="text"
+                  value={editingProduct?.price === 0 ? "" : editingProduct?.price.toString()}
+                  onChange={(e) => {
+                    const input = e.target.value;
+                    if (/^\d*$/.test(input)) {
+                      setEditingProduct({ ...editingProduct, price: Number(input || "0") });
+                    }
+                  }}
+                  className="border p-2 rounded"
+                />
+                
                   ) : (
                     `Rp ${product.price.toLocaleString()}`
                   )}
