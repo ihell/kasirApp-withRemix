@@ -18,6 +18,7 @@ export default function Index() {
   const [menuOpen, setMenuOpen] = useState(false); // State untuk kontrol menu
   const navigate = useNavigate();
 
+  
   useEffect(() => {
     const fetchProducts = async () => {
       const querySnapshot = await getDocs(collection(db, "kasir"));
@@ -120,6 +121,17 @@ export default function Index() {
   );
 }
 
+const Footer = () => {
+  return (
+    <footer className="text-black text-center py-4 mt-8">
+      <p>&copy; {new Date().getFullYear()} SwiftBill. All rights reserved.</p>
+      <p>
+        Made with ❤️ by <a href="https://porto-sv.vercel.app/" className="text-blue-400 hover:underline">Ram Akasaka</a>
+      </p>
+    </footer>
+  );
+};
+
 const ProductTable = ({ products, addToCart }: { products: Product[]; addToCart: (product: Product) => void }) => {
   return (
     <table className="table-auto w-full mb-8">
@@ -153,6 +165,7 @@ const ProductTable = ({ products, addToCart }: { products: Product[]; addToCart:
     </table>
   );
 };
+
 
 const Cart = ({
   cart,
@@ -213,6 +226,7 @@ const Cart = ({
       )}
       <div className="text-right mb-4">
         <h3 className="text-xl font-semibold">Total: Rp {totalAmount.toLocaleString()}</h3>
+      <Footer />
       </div>
     </div>
   );
