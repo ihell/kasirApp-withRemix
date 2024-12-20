@@ -1,11 +1,13 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "firebaseConfig"; // Pastikan path firebaseConfig benar
 
 export default function Payment() {
   const location = useLocation();
   const navigate = useNavigate(); // Tambahkan useNavigate untuk navigasi
   const { cart, totalAmount } = location.state || { cart: [], totalAmount: 0 };
-  
+
   const [name, setName] = useState<string>("");
   const [method, setMethod] = useState<string>("cash");
   const [cashReceived, setCashReceived] = useState<number>(0);
@@ -29,13 +31,31 @@ export default function Payment() {
     setCustomCash(""); // Reset input custom jika memilih Uang Pas
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Arahkan ke halaman Receipt dengan data cart, totalAmount, name, method, dan cashReceived
-    navigate("/receipt", {
-      state: { cart, totalAmount, name, method, cashReceived },
-    });
+    // Simpan data transaksi ke Firebase Firestore
+    try {
+      const transactionData = {
+        customerName: name,
+        paymentMethod: method,
+        totalAmount,
+        cashReceived,
+        change: cashReceived - totalAmount,
+        cart,
+        timestamp: new Date().toISOString(),
+      };
+
+      await addDoc(collection(db, "transaksi"), transactionData);
+
+      // Arahkan ke halaman Receipt dengan data transaksi
+      navigate("/receipt", {
+        state: { cart, totalAmount, name, method, cashReceived },
+      });
+    } catch (error) {
+      console.error("Failed to save transaction: ", error);
+      alert("Failed to process transaction. Please try again.");
+    }
   };
 
   // Fungsi untuk kembali ke halaman sebelumnya

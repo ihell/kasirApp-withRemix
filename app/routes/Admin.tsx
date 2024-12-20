@@ -123,8 +123,6 @@ export default function Admin() {
     }
   };
   
-  
-
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-4xl font-bold text-gray-800 mb-8">Admin Page</h1>

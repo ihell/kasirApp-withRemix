@@ -5,6 +5,7 @@ import Payment from "./Payment";
 import Receipt from "./Receipt";
 import Login from "./Login"; // Menambahkan halaman login
 import Admin from "./Admin"; // Menambahkan halaman admin
+import TransactionHistory from "./TransactionHistory";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/receipt" element={<Receipt />} />
+        <Route path="/transaction-history" element={<TransactionHistory />} />;
       </Routes>
     </Router>
   );
