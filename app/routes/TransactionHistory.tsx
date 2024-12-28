@@ -18,17 +18,14 @@ interface Transaction {
   paymentMethod: string;
 }
 
-export default function TransactionHistory() {
-  const [todayTransactions, setTodayTransactions] = useState<Transaction[]>([]);
-  const [previousTransactions, setPreviousTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [currentDay, setCurrentDay] = useState<string>("");
+interface IncomeByDate {
+  [date: string]: number;
+}
 
-  // Fungsi untuk mendapatkan awal hari (00:00) dalam bentuk timestamp
-  const getStartOfDayTimestamp = (date: Date): number => {
-    const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    return startOfDay.getTime();
-  };
+export default function TransactionHistory() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [incomeByDate, setIncomeByDate] = useState<IncomeByDate>({}); // Total penghasilan per tanggal
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Fungsi untuk mengambil data transaksi
   const fetchTransactions = async () => {
@@ -48,23 +45,19 @@ export default function TransactionHistory() {
         });
       });
 
-      // Pisahkan transaksi berdasarkan hari ini dan sebelumnya
-      const now = new Date();
-      const startOfDay = getStartOfDayTimestamp(now);
+      // Kelompokkan transaksi berdasarkan tanggal
+      const incomeMap: IncomeByDate = {};
 
-      const today = transactionList.filter((transaction) => {
-        const transactionTime = new Date(transaction.timestamp).getTime();
-        return transactionTime >= startOfDay && transactionTime < startOfDay + 24 * 60 * 60 * 1000;
+      transactionList.forEach((transaction) => {
+        const transactionDate = new Date(transaction.timestamp).toLocaleDateString(); // Format tanggal
+        if (!incomeMap[transactionDate]) {
+          incomeMap[transactionDate] = 0;
+        }
+        incomeMap[transactionDate] += transaction.totalAmount;
       });
 
-      const previous = transactionList.filter((transaction) => {
-        const transactionTime = new Date(transaction.timestamp).getTime();
-        return transactionTime < startOfDay;
-      });
-
-      setTodayTransactions(today);
-      setPreviousTransactions(previous);
-      setCurrentDay(now.toDateString());
+      setTransactions(transactionList);
+      setIncomeByDate(incomeMap);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     } finally {
@@ -79,23 +72,25 @@ export default function TransactionHistory() {
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-4xl font-bold text-gray-800 mb-6">Transaction History</h1>
-      <p className="text-gray-600 mb-4">Transactions for: {currentDay}</p>
+
       {loading ? (
         <p className="text-gray-500">Loading transactions...</p>
       ) : (
         <>
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Today’s Transactions</h2>
-          {todayTransactions.length === 0 ? (
-            <p className="text-gray-500">No transactions available for today</p>
-          ) : (
-            <TransactionTable transactions={todayTransactions} />
-          )}
+          <h2 className="text-2xl font-bold text-green-600 mb-6">Income By Date</h2>
+          <ul className="list-disc list-inside mb-6">
+            {Object.entries(incomeByDate).map(([date, totalIncome]) => (
+              <li key={date} className="text-gray-700">
+                {date}: Rp {totalIncome.toLocaleString()}
+              </li>
+            ))}
+          </ul>
 
-          <h2 className="text-2xl font-semibold text-gray-700 mt-8 mb-4">Previous Transactions</h2>
-          {previousTransactions.length === 0 ? (
-            <p className="text-gray-500">No previous transactions available</p>
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">All Transactions</h2>
+          {transactions.length === 0 ? (
+            <p className="text-gray-500">No transactions available</p>
           ) : (
-            <TransactionTable transactions={previousTransactions} />
+            <TransactionTable transactions={transactions} />
           )}
         </>
       )}
