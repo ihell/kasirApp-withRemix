@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Menggunakan useNavigate untuk navigasi
 import { db } from "firebaseConfig"; // Pastikan file firebaseConfig.js sudah diatur dengan benar
 import { collection, getDocs } from "firebase/firestore";
 
@@ -26,6 +27,7 @@ export default function TransactionHistory() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [incomeByDate, setIncomeByDate] = useState<IncomeByDate>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate(); // Inisialisasi useNavigate
 
   const fetchTransactions = async () => {
     try {
@@ -74,6 +76,14 @@ export default function TransactionHistory() {
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Transaction History</h1>
+
+      <button
+        className="mb-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        onClick={() => navigate("/")}
+      >
+        Kembali ke Halaman Utama
+      </button>
+
       {Object.keys(groupedTransactions).map(date => (
         <div key={date} className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">{date}</h2>
