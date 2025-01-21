@@ -9,7 +9,7 @@
 # Login Test!
 
 - `Gmail: admin@gmail.com`
--`Pw: admin#123`
+- `Pw: admin#123`
 
 ## Development
 
