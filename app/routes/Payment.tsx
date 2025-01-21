@@ -5,27 +5,25 @@ import { db } from "firebaseConfig"; // Pastikan path firebaseConfig benar
 
 export default function Payment() {
   const location = useLocation();
-  const navigate = useNavigate(); // Tambahkan useNavigate untuk navigasi
+  const navigate = useNavigate();
   const { cart, totalAmount } = location.state || { cart: [], totalAmount: 0 };
 
   const [name, setName] = useState<string>("");
   const [method, setMethod] = useState<string>("cash");
   const [cashReceived, setCashReceived] = useState<number>(0);
   const [customCash, setCustomCash] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false); // State untuk mencegah submit ganda
 
-  // Fungsi untuk mengatur nominal uang masuk
   const handleCashChange = (amount: number) => {
     setCashReceived(amount);
     setCustomCash(""); // Reset input custom jika memilih dari opsi
   };
 
-  // Fungsi untuk mengatur nominal uang masuk manual
   const handleCustomCash = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomCash(e.target.value);
     setCashReceived(Number(e.target.value) || 0); // Pastikan nilai input dapat diubah ke angka
   };
 
-  // Opsi untuk Uang Pas
   const handleExactAmount = () => {
     setCashReceived(totalAmount);
     setCustomCash(""); // Reset input custom jika memilih Uang Pas
@@ -34,7 +32,12 @@ export default function Payment() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simpan data transaksi ke Firebase Firestore
+    // Cegah pengiriman ganda jika transaksi sedang diproses
+    if (loading) return;
+
+    // Set loading ke true saat proses dimulai
+    setLoading(true);
+
     try {
       const transactionData = {
         customerName: name,
@@ -46,19 +49,22 @@ export default function Payment() {
         timestamp: new Date().toISOString(),
       };
 
+      // Tambahkan transaksi ke Firestore
       await addDoc(collection(db, "transaksi"), transactionData);
 
-      // Arahkan ke halaman Receipt dengan data transaksi
+      // Navigasi ke halaman Receipt setelah transaksi berhasil
       navigate("/receipt", {
         state: { cart, totalAmount, name, method, cashReceived },
       });
     } catch (error) {
       console.error("Failed to save transaction: ", error);
       alert("Failed to process transaction. Please try again.");
+    } finally {
+      // Pastikan loading diatur kembali ke false
+      setLoading(false);
     }
   };
 
-  // Fungsi untuk kembali ke halaman sebelumnya
   const handleGoBack = () => {
     navigate(-1); // Kembali ke halaman sebelumnya
   };
@@ -134,16 +140,21 @@ export default function Payment() {
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={handleGoBack} // Kembali ke halaman sebelumnya
+            onClick={handleGoBack}
             className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md"
           >
             Back
           </button>
           <button
             type="submit"
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
+            disabled={loading} // Tombol tidak aktif saat loading
+            className={`font-semibold py-2 px-4 rounded-md ${
+              loading
+                ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700 text-white"
+            }`}
           >
-            Pay Now
+            {loading ? "Processing..." : "Pay Now"}
           </button>
         </div>
       </form>
