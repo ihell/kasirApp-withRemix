@@ -113,16 +113,12 @@ export default function Admin() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      showNotification("Logout successful! Redirecting to login page...");
-      setTimeout(() => {
-        setIsAuthenticated(false);
-        navigate("/login"); // Arahkan ke halaman login setelah logout
-      }, 2000); // Beri jeda 2 detik sebelum redirect
+      navigate("/login?redirectTo=/admin"); // Redirect to login page after successful logout
     } catch (error) {
-      showNotification("Failed to logout. Please try again.");
+      console.error("Failed to log out:", error);
     }
   };
-  
+
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-4xl font-bold text-gray-800 mb-8">Admin Page</h1>

@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { auth } from "firebaseConfig"; // Pastikan path firebaseConfig benar
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,16 +9,17 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null); // State untuk notifikasi sukses
   const navigate = useNavigate();
+  const location = useLocation();
+  const auth = getAuth();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      setSuccessMessage("Login successful! Redirecting to admin page...");
-      setTimeout(() => {
-        navigate("/admin"); // Arahkan ke halaman admin setelah 2 detik
-      }, 2000);
-    } catch (err) {
-      setError("Login failed. Please check your email and password.");
+      const redirectTo = new URLSearchParams(location.search).get("redirectTo") || "/income";
+      navigate(redirectTo); // Redirect to the intended page after successful login
+    } catch (error) {
+      setError("Failed to log in. Please check your credentials.");
       setSuccessMessage(null); // Reset pesan sukses
     }
   };
@@ -57,26 +57,35 @@ export default function Login() {
         </div>
       )}
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="border p-2 rounded mb-2 w-full"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="border p-2 rounded mb-4 w-full"
-      />
-      <button
-        onClick={isRegistering ? handleSignUp : handleLogin}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md w-full"
-      >
-        {isRegistering ? "Sign Up" : "Login"}
-      </button>
+      <form onSubmit={handleLogin}>
+        <div>
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="border p-2 rounded mb-2 w-full"
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="border p-2 rounded mb-4 w-full"
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md w-full"
+        >
+          {isRegistering ? "Sign Up" : "Login"}
+        </button>
+      </form>
+
       <div className="mt-4 text-center">
         {isRegistering ? (
           <p>

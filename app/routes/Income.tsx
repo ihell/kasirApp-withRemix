@@ -12,6 +12,8 @@ import {
   Legend,
   ChartOptions,
 } from "chart.js";
+import { getAuth, signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 // Registrasi komponen Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -25,39 +27,66 @@ interface Transaction {
 export default function Income() {
   const [monthlyIncome, setMonthlyIncome] = useState<{ [month: string]: number }>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const auth = getAuth();
 
-  const fetchTransactions = async () => {
-    try {
-      // Ambil semua dokumen dari koleksi "transaksi"
-      const querySnapshot = await getDocs(collection(db, "transaksi"));
-      const transactions: Transaction[] = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as Omit<Transaction, "id">),
-      }));
+  // Memeriksa status login pengguna
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        navigate("/login"); // Jika tidak ada pengguna, arahkan ke halaman login
+      } else {
+        setIsAuthenticated(true); // Pengguna sudah login
+      }
+    });
 
-      // Hitung total penghasilan per bulan
-      const income: { [month: string]: number } = {};
-      transactions.forEach((transaction) => {
-        const date = new Date(transaction.timestamp); // Konversi timestamp ke objek Date
-        const month = date.toLocaleString("default", { month: "long", year: "numeric" }); // Format bulan: "January 2024"
-
-        if (!income[month]) {
-          income[month] = 0;
-        }
-        income[month] += transaction.totalAmount; // Tambahkan jumlah transaksi ke bulan terkait
-      });
-
-      setMonthlyIncome(income); // Update state dengan data penghasilan bulanan
-    } catch (error) {
-      console.error("Error fetching transactions: ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => unsubscribe(); // Bersihkan listener saat komponen dihapus
+  }, [auth, navigate]);
 
   useEffect(() => {
+    if (!isAuthenticated) return; // Jika belum login, jangan ambil data produk
+
+    const fetchTransactions = async () => {
+      try {
+        // Ambil semua dokumen dari koleksi "transaksi"
+        const querySnapshot = await getDocs(collection(db, "transaksi"));
+        const transactions: Transaction[] = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<Transaction, "id">),
+        }));
+
+        // Hitung total penghasilan per bulan
+        const income: { [month: string]: number } = {};
+        transactions.forEach((transaction) => {
+          const date = new Date(transaction.timestamp); // Konversi timestamp ke objek Date
+          const month = date.toLocaleString("default", { month: "long", year: "numeric" }); // Format bulan: "January 2024"
+
+          if (!income[month]) {
+            income[month] = 0;
+          }
+          income[month] += transaction.totalAmount; // Tambahkan jumlah transaksi ke bulan terkait
+        });
+
+        setMonthlyIncome(income); // Update state dengan data penghasilan bulanan
+      } catch (error) {
+        console.error("Error fetching transactions: ", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchTransactions();
-  }, []);
+  }, [isAuthenticated]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login?redirectTo=/income"); // Redirect to login page after successful logout
+    } catch (error) {
+      console.error("Failed to log out:", error);
+    }
+  };
 
   if (loading) {
     return <div className="text-center text-gray-600 mt-10">Loading...</div>;
@@ -80,12 +109,11 @@ export default function Income() {
     ],
   };
 
-
   const chartOptions: ChartOptions<"bar"> = {
     responsive: true,
     plugins: {
-        legend: { position: 'top' }, // Gunakan nilai yang valid seperti "top", "bottom", dll.
-        title: { display: true, text: "Grafik Penghasilan Bulanan" }
+      legend: { position: "top" }, // Gunakan nilai yang valid seperti "top", "bottom", dll.
+      title: { display: true, text: "Grafik Penghasilan Bulanan" },
     },
   };
 
@@ -98,6 +126,13 @@ export default function Income() {
         className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md mb-4"
       >
         Back
+      </button>
+
+      <button
+        onClick={handleLogout}
+        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md mb-4 ml-4"
+      >
+        Logout
       </button>
 
       {/* Grafik batang */}
