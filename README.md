@@ -6,6 +6,11 @@
 
 - [Demo Here](https://kasir-app-with-remix-gkwzptowj-ihells-projects.vercel.app/)
 
+# Login Test!
+
+- `Gmail: admin@gmail.com`
+-`Pw: admin#123`
+
 ## Development
 
 Run the dev server:
