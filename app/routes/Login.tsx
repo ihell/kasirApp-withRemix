@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isRegistering, setIsRegistering] = useState(false); // Menambahkan state untuk mode daftar
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null); // State untuk notifikasi sukses
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const auth = getAuth();
@@ -17,36 +16,24 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       const redirectTo = new URLSearchParams(location.search).get("redirectTo") || "/income";
-      navigate(redirectTo); // Redirect to the intended page after successful login
+      localStorage.setItem("sessionType", redirectTo); // Store session type in local storage
+      setSuccess("Login successful! Redirecting...");
+      setTimeout(() => {
+        navigate(redirectTo); // Redirect to the intended page after successful login
+      }, 2000); // Delay for 2 seconds to show the success message
     } catch (error) {
       setError("Failed to log in. Please check your credentials.");
-      setSuccessMessage(null); // Reset pesan sukses
-    }
-  };
-
-  const handleSignUp = async () => {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      setSuccessMessage("Sign up successful! Redirecting to admin page...");
-      setTimeout(() => {
-        navigate("/admin"); // Arahkan ke halaman admin setelah 2 detik
-      }, 2000);
-    } catch (err) {
-      setError("Sign up failed. Please try again.");
-      setSuccessMessage(null); // Reset pesan sukses
     }
   };
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8">
-        {isRegistering ? "Sign Up" : "Login"}
-      </h1>
+      <h1 className="text-4xl font-bold text-gray-800 mb-8">Login</h1>
 
       {/* Menampilkan pesan sukses */}
-      {successMessage && (
+      {success && (
         <div className="text-green-500 mb-4 p-4 bg-green-100 rounded-lg">
-          {successMessage}
+          {success}
         </div>
       )}
 
@@ -82,41 +69,9 @@ export default function Login() {
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md w-full"
         >
-          {isRegistering ? "Sign Up" : "Login"}
+          Login
         </button>
       </form>
-
-      <div className="mt-4 text-center">
-        {isRegistering ? (
-          <p>
-            Already have an account?{" "}
-            <span
-              onClick={() => {
-                setIsRegistering(false);
-                setError(null); // Reset error saat mode berubah
-                setSuccessMessage(null); // Reset pesan sukses saat mode berubah
-              }}
-              className="text-blue-600 cursor-pointer"
-            >
-              Login
-            </span>
-          </p>
-        ) : (
-          <p>
-            Don’t have an account?{" "}
-            <span
-              onClick={() => {
-                setIsRegistering(true);
-                setError(null); // Reset error saat mode berubah
-                setSuccessMessage(null); // Reset pesan sukses saat mode berubah
-              }}
-              className="text-blue-600 cursor-pointer"
-            >
-              Sign Up
-            </span>
-          </p>
-        )}
-      </div>
 
       {/* Tombol Kembali ke Halaman Index */}
       <div className="mt-6">

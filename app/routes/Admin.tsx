@@ -23,6 +23,7 @@ export default function Admin() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [logoutMessage, setLogoutMessage] = useState("");
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -113,7 +114,11 @@ export default function Admin() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate("/login?redirectTo=/admin"); // Redirect to login page after successful logout
+      localStorage.removeItem("sessionType"); // Remove session type from local storage
+      setLogoutMessage("Logout successful! Redirecting...");
+      setTimeout(() => {
+        navigate("/login?redirectTo=/admin"); // Redirect to login page after successful logout
+      }, 2000); // Delay for 2 seconds to show the logout message
     } catch (error) {
       console.error("Failed to log out:", error);
     }
@@ -136,6 +141,8 @@ export default function Admin() {
       >
         Logout
       </button>
+
+      {logoutMessage && <p style={{ color: 'green' }}>{logoutMessage}</p>}
 
       {notification && (
         <div className="mb-4 p-4 bg-green-100 text-green-800 rounded-lg">

@@ -28,6 +28,7 @@ export default function Income() {
   const [monthlyIncome, setMonthlyIncome] = useState<{ [month: string]: number }>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [logoutMessage, setLogoutMessage] = useState("");
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -82,7 +83,11 @@ export default function Income() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate("/login?redirectTo=/income"); // Redirect to login page after successful logout
+      localStorage.removeItem("sessionType"); // Remove session type from local storage
+      setLogoutMessage("Logout successful! Redirecting...");
+      setTimeout(() => {
+        navigate("/login?redirectTo=/income"); // Redirect to login page after successful logout
+      }, 2000); // Delay for 2 seconds to show the logout message
     } catch (error) {
       console.error("Failed to log out:", error);
     }
@@ -134,6 +139,8 @@ export default function Income() {
       >
         Logout
       </button>
+
+      {logoutMessage && <p style={{ color: 'green' }}>{logoutMessage}</p>}
 
       {/* Grafik batang */}
       <div className="mb-8">
