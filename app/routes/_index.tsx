@@ -95,24 +95,6 @@ export default function Index() {
         >
           Admin Page
         </button>
-        <button
-          onClick={() => {
-            setMenuOpen(false);
-            navigate("/TransactionHistory");
-          }}
-          className="block text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-md mt-2"
-        >
-          Transaction History
-        </button>
-        <button
-          onClick={() => {
-            setMenuOpen(false);
-            navigate("/Income");
-          }}
-          className="block text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-md mt-2"
-        >
-          Income Grafik
-        </button>
       </div>
 
       <ProductTable products={products} addToCart={addToCart} />

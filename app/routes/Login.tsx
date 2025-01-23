@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Login() {
@@ -8,18 +8,15 @@ export default function Login() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-  const location = useLocation();
   const auth = getAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      const redirectTo = new URLSearchParams(location.search).get("redirectTo") || "/income";
-      localStorage.setItem("sessionType", redirectTo); // Store session type in local storage
       setSuccess("Login successful! Redirecting...");
       setTimeout(() => {
-        navigate(redirectTo); // Redirect to the intended page after successful login
+        navigate("/admin"); // Redirect to the admin page after successful login
       }, 2000); // Delay for 2 seconds to show the success message
     } catch (error) {
       setError("Failed to log in. Please check your credentials.");
