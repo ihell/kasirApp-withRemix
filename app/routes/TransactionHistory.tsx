@@ -78,10 +78,10 @@ export default function TransactionHistory() {
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Transaction History</h1>
 
       <button
-        className="mb-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        onClick={() => navigate("/")}
+        onClick={() => window.history.back()}
+        className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md mb-4"
       >
-        Kembali ke Halaman Utama
+        Back
       </button>
 
       {Object.keys(groupedTransactions).map(date => (

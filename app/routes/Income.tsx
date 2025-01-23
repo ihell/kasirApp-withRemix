@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "firebaseConfig"; // Sesuaikan dengan path firebaseConfig Anda
 import { Bar } from "react-chartjs-2";
@@ -12,7 +12,6 @@ import {
   Legend,
   ChartOptions,
 } from "chart.js";
-import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 // Registrasi komponen Chart.js
@@ -25,29 +24,24 @@ interface Transaction {
 }
 
 export default function Income() {
+  const [income, setIncome] = useState<number>(0);
   const [monthlyIncome, setMonthlyIncome] = useState<{ [month: string]: number }>({});
   const [loading, setLoading] = useState<boolean>(true);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [logoutMessage, setLogoutMessage] = useState("");
   const navigate = useNavigate();
-  const auth = getAuth();
-
-  // Memeriksa status login pengguna
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (!user) {
-        navigate("/login"); // Jika tidak ada pengguna, arahkan ke halaman login
-      } else {
-        setIsAuthenticated(true); // Pengguna sudah login
-      }
-    });
-
-    return () => unsubscribe(); // Bersihkan listener saat komponen dihapus
-  }, [auth, navigate]);
 
   useEffect(() => {
-    if (!isAuthenticated) return; // Jika belum login, jangan ambil data produk
+    // Fetch income data from your database or API
+    const fetchIncome = async () => {
+      // Example fetch logic
+      const response = await fetch('/api/income');
+      const data = await response.json();
+      setIncome(data.totalIncome);
+    };
 
+    fetchIncome();
+  }, []);
+
+  useEffect(() => {
     const fetchTransactions = async () => {
       try {
         // Ambil semua dokumen dari koleksi "transaksi"
@@ -78,20 +72,7 @@ export default function Income() {
     };
 
     fetchTransactions();
-  }, [isAuthenticated]);
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      localStorage.removeItem("sessionType"); // Remove session type from local storage
-      setLogoutMessage("Logout successful! Redirecting...");
-      setTimeout(() => {
-        navigate("/login?redirectTo=/income"); // Redirect to login page after successful logout
-      }, 2000); // Delay for 2 seconds to show the logout message
-    } catch (error) {
-      console.error("Failed to log out:", error);
-    }
-  };
+  }, []);
 
   if (loading) {
     return <div className="text-center text-gray-600 mt-10">Loading...</div>;
@@ -124,6 +105,8 @@ export default function Income() {
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h1 className="text-2xl font-bold mb-4">Total Income</h1>
+      <p className="text-lg">{income}</p>
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Penghasilan Bulanan</h1>
 
       <button
@@ -132,15 +115,6 @@ export default function Income() {
       >
         Back
       </button>
-
-      <button
-        onClick={handleLogout}
-        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md mb-4 ml-4"
-      >
-        Logout
-      </button>
-
-      {logoutMessage && <p style={{ color: 'green' }}>{logoutMessage}</p>}
 
       {/* Grafik batang */}
       <div className="mb-8">

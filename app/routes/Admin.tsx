@@ -173,7 +173,7 @@ export default function Admin() {
       <h1 className="text-4xl font-bold text-gray-800 mb-8">Admin Page</h1>
 
       <button
-        onClick={() => window.history.back()}
+        onClick={() => navigate("/")}
         className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md mb-4"
       >
         Back
