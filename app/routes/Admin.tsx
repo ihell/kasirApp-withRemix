@@ -131,8 +131,9 @@ export default function Admin() {
   };
 
   return (
-    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <div className="relative">
+    <div className="min-h-screen bg-white flex flex-col items-center p-4 sm:p-6 md:p-8">
+      {/* Header */}
+      <div className="relative w-full max-w-6xl">
         {/* Menu Hamburger */}
         <button
           className="absolute top-4 right-4 flex flex-col justify-center items-center w-8 h-8 bg-transparent border-none cursor-pointer"
@@ -143,6 +144,7 @@ export default function Admin() {
           <span className="block w-6 h-0.5 bg-gray-700"></span>
         </button>
 
+        {/* Dropdown Menu */}
         <div
           className={`absolute top-16 right-4 bg-white shadow-md rounded-md w-48 z-10 transition-all duration-300 ease-in-out ${
             showMenu ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"
@@ -170,116 +172,133 @@ export default function Admin() {
         </div>
       </div>
 
+      {/* Title */}
       <h1 className="text-4xl font-bold text-gray-800 mb-8">Admin Page</h1>
 
-      <button
-        onClick={() => navigate("/")}
-        className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md mb-4"
-      >
-        Back
-      </button>
+      {/* Buttons */}
+      <div className="flex flex-wrap gap-4 mb-6">
+        <button
+          onClick={() => navigate("/")}
+          className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md"
+        >
+          Back
+        </button>
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md"
+        >
+          Logout
+        </button>
+      </div>
 
-      <button
-        onClick={handleLogout}
-        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md mb-4 ml-4"
-      >
-        Logout
-      </button>
-
-      {logoutMessage && <p style={{ color: 'green' }}>{logoutMessage}</p>}
-
+      {/* Notification */}
+      {logoutMessage && <p className="text-green-600 mb-4">{logoutMessage}</p>}
       {notification && (
         <div className="mb-4 p-4 bg-green-100 text-green-800 rounded-lg">
           {notification}
         </div>
       )}
 
-      <div className="mb-8">
+      {/* Add New Product */}
+      <div className="w-full max-w-4xl mb-8">
         <h2 className="text-2xl font-semibold mb-4">Add New Product</h2>
-        <input
-          type="text"
-          placeholder="Product Name"
-          value={newProduct.name}
-          onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-          className="border p-2 rounded mb-2 mr-2"
-        />
-        <input
-          type="text"
-          placeholder="Price"
-          value={newProduct.price === 0 ? "" : newProduct.price.toString()}
-          onChange={(e) => {
-        const input = e.target.value;
-      // Hanya memperbarui state jika input adalah angka yang valid
-          if (/^\d*$/.test(input)) {
-      setNewProduct({ ...newProduct, price: Number(input || "0") });
-    }
-  }}
-  className="border p-2 rounded mb-2 mr-2"
-  />
-
-        <input
-          type="file"
-          onChange={(e) =>
-            setNewProduct({ ...newProduct, imageFile: e.target.files ? e.target.files[0] : null })
-          }
-          className="border p-2 rounded mb-2 mr-2"
-        />
-        <button
-          onClick={handleAddProduct}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
-        >
-          Add Product
-        </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input
+            type="text"
+            placeholder="Product Name"
+            value={newProduct.name}
+            onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            placeholder="Price"
+            value={newProduct.price === 0 ? "" : newProduct.price.toString()}
+            onChange={(e) => {
+              const input = e.target.value;
+              if (/^\d*$/.test(input)) {
+                setNewProduct({ ...newProduct, price: Number(input || "0") });
+              }
+            }}
+            className="border p-2 rounded"
+          />
+          <input
+            type="file"
+            onChange={(e) =>
+              setNewProduct({ ...newProduct, imageFile: e.target.files ? e.target.files[0] : null })
+            }
+            className="border p-2 rounded"
+          />
+          <button
+            onClick={handleAddProduct}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+          >
+            Add Product
+          </button>
+        </div>
       </div>
 
-      <div className="mb-8">
+      {/* Product List */}
+      <div className="w-full max-w-6xl">
         <h2 className="text-2xl font-semibold mb-4">Product List</h2>
-        <table className="table-auto w-full mb-8">
+        <table className="table-auto w-full mb-8 border-collapse border border-gray-200">
           <thead>
-            <tr className="text-left bg-gray-100 text-gray-700">
-              <th className="px-6 py-3">Photo</th>
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Price</th>
-              <th className="px-6 py-3">Actions</th>
+            <tr className="bg-gray-100 text-gray-700">
+              <th className="border border-gray-300 px-4 py-2">Photo</th>
+              <th className="border border-gray-300 px-4 py-2">Name</th>
+              <th className="border border-gray-300 px-4 py-2">Price</th>
+              <th className="border border-gray-300 px-4 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
             {products.map((product) => (
               <tr key={product.id} className="border-t">
-                <td className="px-6 py-4">
-                  <img src={product.image} alt={product.name} className="w-16 h-16 object-cover rounded-md" />
+                <td className="border border-gray-300 px-4 py-2">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-16 h-16 object-cover rounded-md"
+                  />
                 </td>
-                <td className="px-6 py-4">
+                <td className="border border-gray-300 px-4 py-2">
                   {editingProduct && editingProduct.id === product.id ? (
                     <input
                       type="text"
                       value={editingProduct.name}
-                      onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
+                      onChange={(e) =>
+                        setEditingProduct({ ...editingProduct, name: e.target.value })
+                      }
                       className="border p-2 rounded"
                     />
                   ) : (
                     product.name
                   )}
                 </td>
-                <td className="px-6 py-4">
+                <td className="border border-gray-300 px-4 py-2">
                   {editingProduct && editingProduct.id === product.id ? (
-                  <input
-                  type="text"
-                  value={editingProduct?.price === 0 ? "" : editingProduct?.price.toString()}
-                  onChange={(e) => {
-                    const input = e.target.value;
-                    if (/^\d*$/.test(input)) {
-                      setEditingProduct({ ...editingProduct, price: Number(input || "0") });
-                    }
-                  }}
-                  className="border p-2 rounded"
-                />
-                
+                    <input
+                      type="text"
+                      value={
+                        editingProduct?.price === 0
+                          ? ""
+                          : editingProduct?.price.toString()
+                      }
+                      onChange={(e) => {
+                        const input = e.target.value;
+                        if (/^\d*$/.test(input)) {
+                          setEditingProduct({
+                            ...editingProduct,
+                            price: Number(input || "0"),
+                          });
+                        }
+                      }}
+                      className="border p-2 rounded"
+                    />
                   ) : (
                     `Rp ${product.price.toLocaleString()}`
                   )}
                 </td>
-                <td className="px-6 py-4">
+                <td className="border border-gray-300 px-4 py-2">
                   {editingProduct && editingProduct.id === product.id ? (
                     <button
                       onClick={handleUpdateProduct}

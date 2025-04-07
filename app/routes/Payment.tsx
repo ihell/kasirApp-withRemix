@@ -13,6 +13,7 @@ export default function Payment() {
   const [cashReceived, setCashReceived] = useState<number>(0);
   const [customCash, setCustomCash] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false); // State untuk mencegah submit ganda
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleCashChange = (amount: number) => {
     setCashReceived(amount);
@@ -31,6 +32,12 @@ export default function Payment() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validasi input nama
+    if (!name.trim()) {
+      setErrorMessage("Customer name is required."); // Tampilkan pesan error
+      return;
+    }
 
     // Cegah pengiriman ganda jika transaksi sedang diproses
     if (loading) return;
@@ -70,29 +77,43 @@ export default function Payment() {
   };
 
   return (
-    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="min-h-screen bg-white flex flex-col items-center p-4 sm:p-6 md:p-8 relative">
       <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">SwiftBill</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+
+      <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-2xl">
+        {/* Customer Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Customer Name</label>
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="block w-full px-4 py-2 border rounded-md"
+            onChange={(e) => {
+              setName(e.target.value);
+              if (e.target.value.trim()) {
+                setErrorMessage(""); // Hapus pesan error jika nama diisi
+              }
+            }}
+            className="block w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          {errorMessage && (
+            <p className="text-red-500 text-sm mt-1">{errorMessage}</p>
+          )}
         </div>
+
+        {/* Payment Method */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Payment Method</label>
           <select
             value={method}
             onChange={(e) => setMethod(e.target.value)}
-            className="block w-full px-4 py-2 border rounded-md"
+            className="block w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="cash">Cash</option>
             <option value="credit">Credit Card</option>
           </select>
         </div>
+
+        {/* Admission Fee */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Admission Fee</label>
           <div className="grid grid-cols-3 gap-2">
@@ -100,7 +121,9 @@ export default function Payment() {
               <button
                 key={amount}
                 type="button"
-                className={`px-4 py-2 border rounded-md ${cashReceived === amount ? 'bg-gray-300' : ''}`}
+                className={`px-4 py-2 border rounded-md ${
+                  cashReceived === amount ? "bg-gray-300" : ""
+                }`}
                 onClick={() => handleCashChange(amount)}
               >
                 Rp {amount.toLocaleString()}
@@ -108,7 +131,9 @@ export default function Payment() {
             ))}
             <button
               type="button"
-              className={`px-4 py-2 border rounded-md ${cashReceived === totalAmount ? 'bg-gray-300' : ''}`}
+              className={`px-4 py-2 border rounded-md ${
+                cashReceived === totalAmount ? "bg-gray-300" : ""
+              }`}
               onClick={handleExactAmount}
             >
               Exact Money
@@ -120,15 +145,15 @@ export default function Payment() {
               type="number"
               value={customCash}
               onChange={handleCustomCash}
-              placeholder="Masukkan nominal uang"
-              className="block w-full px-4 py-2 border rounded-md"
+              placeholder="Enter custom amount"
+              className="block w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
+
+        {/* Total and Change */}
         <div>
           <h3 className="text-xl font-semibold">Total: Rp {totalAmount.toLocaleString()}</h3>
-        </div>
-        <div>
           <h3 className="text-xl font-semibold">
             Admission Fee: Rp {cashReceived.toLocaleString()}
           </h3>
@@ -136,6 +161,8 @@ export default function Payment() {
             Return: Rp {(cashReceived - totalAmount).toLocaleString()}
           </h3>
         </div>
+
+        {/* Buttons */}
         <div className="flex justify-between">
           <button
             type="button"
@@ -146,7 +173,6 @@ export default function Payment() {
           </button>
           <button
             type="submit"
-            disabled={loading} // Tombol tidak aktif saat loading
             className={`font-semibold py-2 px-4 rounded-md ${
               loading
                 ? "bg-gray-400 text-gray-700 cursor-not-allowed"

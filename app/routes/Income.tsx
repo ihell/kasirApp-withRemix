@@ -104,42 +104,55 @@ export default function Income() {
   };
 
   return (
-    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Total Income</h1>
-      <p className="text-lg">{income}</p>
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Penghasilan Bulanan</h1>
-
+    <div className="min-h-screen bg-white flex flex-col items-center p-4 sm:p-6 md:p-8 relative">
+      {/* Tombol Back di pojok kiri atas */}
       <button
         onClick={() => window.history.back()}
-        className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md mb-4"
+        className="absolute top-4 left-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md"
       >
         Back
       </button>
 
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+        Income Overview
+      </h1>
+
+      {/* Total Income */}
+      <div className="w-full max-w-4xl bg-gray-100 p-6 rounded-lg shadow-md mb-6">
+        <h2 className="text-xl font-semibold text-gray-700 mb-2">Total Income</h2>
+        <p className="text-2xl font-bold text-green-600">Rp {income.toLocaleString()}</p>
+      </div>
+
       {/* Grafik batang */}
-      <div className="mb-8">
-        <Bar data={chartData} options={chartOptions} />
+      <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Monthly Income Chart</h2>
+        <div className="overflow-x-auto">
+          <Bar data={chartData} options={chartOptions} />
+        </div>
       </div>
 
       {/* Tabel penghasilan */}
-      <table className="table-auto w-full border-collapse border border-gray-200">
-        <thead>
-          <tr className="bg-gray-100 text-gray-700">
-            <th className="border border-gray-300 px-4 py-2">Bulan</th>
-            <th className="border border-gray-300 px-4 py-2">Total Penghasilan (Rp)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {months.map((month, index) => (
-            <tr key={month} className="text-gray-700">
-              <td className="border border-gray-300 px-4 py-2">{month}</td>
-              <td className="border border-gray-300 px-4 py-2">
-                Rp {totals[index].toLocaleString()}
-              </td>
+      <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Monthly Income Table</h2>
+        <table className="table-auto w-full border-collapse border border-gray-200">
+          <thead>
+            <tr className="bg-gray-100 text-gray-700">
+              <th className="border border-gray-300 px-4 py-2">Month</th>
+              <th className="border border-gray-300 px-4 py-2">Total Income (Rp)</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {months.map((month, index) => (
+              <tr key={month} className="text-gray-700">
+                <td className="border border-gray-300 px-4 py-2">{month}</td>
+                <td className="border border-gray-300 px-4 py-2">
+                  Rp {totals[index].toLocaleString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

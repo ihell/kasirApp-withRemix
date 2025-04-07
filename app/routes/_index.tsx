@@ -18,7 +18,6 @@ export default function Index() {
   const [menuOpen, setMenuOpen] = useState(false); // State untuk kontrol menu
   const navigate = useNavigate();
 
-  
   useEffect(() => {
     const fetchProducts = async () => {
       const querySnapshot = await getDocs(collection(db, "kasir"));
@@ -68,55 +67,57 @@ export default function Index() {
   }, [cart]);
 
   return (
-    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg relative">
+    <div className="min-h-screen bg-white flex flex-col items-center p-4 sm:p-6 md:p-8">
       {/* Header dengan ikon menu */}
-      <div className="flex items-center justify-between mb-8">
-        <button
-          className="text-gray-800 text-3xl"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          &#9776; {/* Ikon garis tiga (hamburger) */}
-        </button>
-        <h1 className="text-4xl font-bold text-gray-800">SwiftBill</h1>
-      </div>
-
-      {/* Menu dropdown dengan efek transisi */}
-      <div
-        className={`absolute bg-white shadow-lg rounded-lg p-4 left-0 top-15 z-10 transform transition-all duration-300 ease-in-out ${
-          menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"
-        }`}
-      >
-        <button
-          onClick={() => {
-            setMenuOpen(false);
-            navigate("./Admin");
-          }}
-          className="block text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-md"
-        >
-          Admin Page
-        </button>
-      </div>
-
-      <ProductTable products={products} addToCart={addToCart} />
-      <Cart
-        cart={cart}
-        handleQuantityChange={handleQuantityChange}
-        removeFromCart={removeFromCart}
-        totalAmount={totalAmount}
-      />
-      {cart.length > 0 && (
-        <div className="text-right">
-          <Link
-            to={{
-              pathname: "/payment",
-            }}
-            state={{ cart: cart, totalAmount: totalAmount }}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
+      <div className="w-full max-w-4xl">
+        <div className="flex items-center justify-between mb-8">
+          <button
+            className="text-gray-800 text-3xl"
+            onClick={() => setMenuOpen(!menuOpen)}
           >
-            Pay
-          </Link>
+            &#9776; {/* Ikon garis tiga (hamburger) */}
+          </button>
+          <h1 className="text-4xl font-bold text-gray-800">SwiftBill</h1>
         </div>
-      )}
+
+        {/* Menu dropdown dengan efek transisi */}
+        <div
+          className={`absolute bg-white shadow-lg rounded-lg p-4 left-0 top-15 z-10 transform transition-all duration-300 ease-in-out ${
+            menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"
+          }`}
+        >
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              navigate("./Admin");
+            }}
+            className="block text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-md"
+          >
+            Admin Page
+          </button>
+        </div>
+
+        <ProductTable products={products} addToCart={addToCart} />
+        <Cart
+          cart={cart}
+          handleQuantityChange={handleQuantityChange}
+          removeFromCart={removeFromCart}
+          totalAmount={totalAmount}
+        />
+        {cart.length > 0 && (
+          <div className="text-right">
+            <Link
+              to={{
+                pathname: "/payment",
+              }}
+              state={{ cart: cart, totalAmount: totalAmount }}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
+            >
+              Pay
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
