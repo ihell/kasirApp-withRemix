@@ -205,7 +205,7 @@ const Cart = ({
             <tr className="text-left bg-gray-100 text-gray-700">
               <th className="px-6 py-3">Photo</th>
               <th className="px-6 py-3">Name Product</th>
-              <th className="px-6 py-3">Amout</th>
+              <th className="px-6 py-3">Amount</th>
               <th className="px-6 py-3">Total Price</th>
               <th className="px-6 py-3">Action</th>
             </tr>
@@ -214,7 +214,13 @@ const Cart = ({
             {cart.map((item) => (
               <tr key={item.id} className="border-t">
                 <td className="px-6 py-4">
-                  <img src={item.image} alt={item.name} className="w-32 h-32 object-cover rounded-md" />
+                  <div className="w-32 h-32 rounded-md overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </td>
                 <td className="px-6 py-4">{item.name}</td>
                 <td className="px-6 py-4">
