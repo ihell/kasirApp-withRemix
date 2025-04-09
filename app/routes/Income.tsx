@@ -132,7 +132,7 @@ export default function Income() {
       </div>
 
       {/* Tabel penghasilan */}
-      <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
+      <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md overflow-x-auto">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">Monthly Income Table</h2>
         <table className="table-auto w-full border-collapse border border-gray-200">
           <thead>

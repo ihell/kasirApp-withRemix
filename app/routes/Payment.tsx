@@ -116,7 +116,7 @@ export default function Payment() {
         {/* Admission Fee */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Admission Fee</label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 overflow-x-auto">
             {[5000, 10000, 20000, 50000, 100000].map((amount) => (
               <button
                 key={amount}

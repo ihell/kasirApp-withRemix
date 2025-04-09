@@ -239,7 +239,7 @@ export default function Admin() {
       </div>
 
       {/* Product List */}
-      <div className="w-full max-w-6xl">
+      <div className="w-full max-w-6xl overflow-x-auto">
         <h2 className="text-2xl font-semibold mb-4">Product List</h2>
         <table className="table-auto w-full mb-8 border-collapse border border-gray-200">
           <thead>
@@ -260,60 +260,17 @@ export default function Admin() {
                     className="w-16 h-16 object-cover rounded-md"
                   />
                 </td>
+                <td className="border border-gray-300 px-4 py-2">{product.name}</td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {editingProduct && editingProduct.id === product.id ? (
-                    <input
-                      type="text"
-                      value={editingProduct.name}
-                      onChange={(e) =>
-                        setEditingProduct({ ...editingProduct, name: e.target.value })
-                      }
-                      className="border p-2 rounded"
-                    />
-                  ) : (
-                    product.name
-                  )}
+                  Rp {product.price.toLocaleString()}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {editingProduct && editingProduct.id === product.id ? (
-                    <input
-                      type="text"
-                      value={
-                        editingProduct?.price === 0
-                          ? ""
-                          : editingProduct?.price.toString()
-                      }
-                      onChange={(e) => {
-                        const input = e.target.value;
-                        if (/^\d*$/.test(input)) {
-                          setEditingProduct({
-                            ...editingProduct,
-                            price: Number(input || "0"),
-                          });
-                        }
-                      }}
-                      className="border p-2 rounded"
-                    />
-                  ) : (
-                    `Rp ${product.price.toLocaleString()}`
-                  )}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {editingProduct && editingProduct.id === product.id ? (
-                    <button
-                      onClick={handleUpdateProduct}
-                      className="bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded-md mr-2"
-                    >
-                      Save
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleEditProduct(product)}
-                      className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-3 rounded-md mr-2"
-                    >
-                      Edit
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleEditProduct(product)}
+                    className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-1 px-3 rounded-md mr-2"
+                  >
+                    Edit
+                  </button>
                   <button
                     onClick={() => handleDeleteProduct(product.id)}
                     className="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-md"

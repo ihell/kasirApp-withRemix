@@ -99,7 +99,7 @@ export default function TransactionHistory() {
       </h1>
 
       {sortedDates.map((date) => (
-        <div key={date} className="w-full max-w-4xl mb-8">
+        <div key={date} className="w-full max-w-4xl mb-8 overflow-x-auto">
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">{date}</h2>
           <table className="table-auto w-full border-collapse border border-gray-200">
             <thead>

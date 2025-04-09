@@ -69,7 +69,7 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center p-4 sm:p-6 md:p-8">
       {/* Header dengan ikon menu */}
-      <div className="w-full max-w-4xl">
+      <div className="w-full max-w-6xl">
         <div className="flex items-center justify-between mb-8">
           <button
             className="text-gray-800 text-3xl"
@@ -97,15 +97,24 @@ export default function Index() {
           </button>
         </div>
 
-        <ProductTable products={products} addToCart={addToCart} />
-        <Cart
-          cart={cart}
-          handleQuantityChange={handleQuantityChange}
-          removeFromCart={removeFromCart}
-          totalAmount={totalAmount}
-        />
+        {/* Tabel Produk */}
+        <div className="overflow-x-auto w-full">
+          <ProductTable products={products} addToCart={addToCart} />
+        </div>
+
+        {/* Keranjang */}
+        <div className="overflow-x-auto w-full mt-8">
+          <Cart
+            cart={cart}
+            handleQuantityChange={handleQuantityChange}
+            removeFromCart={removeFromCart}
+            totalAmount={totalAmount}
+          />
+        </div>
+
+        {/* Tombol Pay */}
         {cart.length > 0 && (
-          <div className="text-right">
+          <div className="text-right mt-4">
             <Link
               to={{
                 pathname: "/payment",
@@ -118,6 +127,7 @@ export default function Index() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }
