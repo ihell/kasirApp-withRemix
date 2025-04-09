@@ -127,7 +127,6 @@ export default function Index() {
           </div>
         )}
       </div>
-      <Footer />
     </div>
   );
 }
@@ -158,7 +157,13 @@ const ProductTable = ({ products, addToCart }: { products: Product[]; addToCart:
         {products.map((product) => (
           <tr key={product.id} className="border-t">
             <td className="px-6 py-4">
-              <img src={product.image} alt={product.name} className="w-32 h-32 object-cover rounded-md" />
+              <div className="w-32 h-32 rounded-md overflow-hidden">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </td>
             <td className="px-6 py-4">{product.name}</td>
             <td className="px-6 py-4">Rp {product.price.toLocaleString()}</td>
@@ -237,7 +242,7 @@ const Cart = ({
       )}
       <div className="text-right mb-4">
         <h3 className="text-xl font-semibold">Total: Rp {totalAmount.toLocaleString()}</h3>
-      <Footer />
+       <Footer />
       </div>
     </div>
   );
