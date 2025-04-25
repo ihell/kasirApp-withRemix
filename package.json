@@ -16,7 +16,7 @@
     "@remix-run/react": "^2.12.1",
     "@remix-run/serve": "^2.12.1",
     "chart.js": "^4.4.7",
-    "firebase": "^10.14.0",
+    "firebase": "^11.6.1",
     "html2canvas": "^1.4.1",
     "isbot": "^4.1.0",
     "jspdf": "^2.5.2",
